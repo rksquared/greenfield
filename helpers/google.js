@@ -11,27 +11,6 @@ const convertAddressToLatLon = (address) => {
     .catch(err => console.log('err trying to get lat/lon from google:', err)) //not sure if this needs to be here or should just be chained
 };
 
-const getPlace = (coords, searchTerms) => {
-  /*
-  searchTerms are something like {type: 'bank', query: 'chase', radius: '50'}
-  */
-//  const testCoords = {lat: 40.750576, lng: -73.97643719999999}; //organize this data better
-//  const searchTerms = {type: 'bank', query: 'chase', radius: '50'};
- const params = {
-   key: apiKey,
-   location: `${coords.lat},${coords.lng}`,
-   radius: searchTerms.radius,
-   type: searchTerms.type,
-   keyword: searchTerms.query
- };
- return axios.get('https://maps.googleapis.com/maps/api/place/nearbysearch/json?', {params: params})
-  .then(resp => {
-    console.log('resp from google places is', JSON.stringify(resp.data.results));
-    return resp.data.results;
-  })
-  .catch(err => console.log('error from google places API is', err))
-}
-
 const getPlaces = (coords, searchArr) => {
   //map searchArr to promises
   const searchPromises = searchArr.map((searchTerms) => {
@@ -46,18 +25,79 @@ const getPlaces = (coords, searchArr) => {
     //return a promise
     return axios.get('https://maps.googleapis.com/maps/api/place/nearbysearch/json?', {params: params})
       .then(resp => {
-        console.log('resp from google places is', JSON.stringify(resp.data.results));
+        console.log('resp from google places for single place is', JSON.stringify(resp.data.results));
         return resp.data.results;
       })
+      /*GOAL: Add something like
+        {"mode":"walking",
+        "distanceText":"0.4 mi",
+        "distanceValue":668,
+        "durationText":"9 mins",
+        "durationValue":536}
+      to each member of resp.data.results
+      WILL HAVE TO BE ANOTHER MAP
+      */
       .catch(err => console.log('error from google places API is', err))
   })
   //return the mapped set of promises
   return Promise.all(searchPromises);
 }
 
+const getTravelDistance = (coords, placeID, userTravelPrefs) => {
+  // TODO: Currently only gives travel times if driving...add support for walking, transit
+  const params = {
+    key: apiKey,
+    origins: `${coords.lat},${coords.lng}`,
+    destinations: `place_id:${placeID}`,
+    units: 'imperial',
+    mode: userTravelPrefs.mode
+  }
+
+  return axios.get('https://maps.googleapis.com/maps/api/distancematrix/json?', {params: params})
+    .then(resp => {
+      return {
+        mode: userTravelPrefs.mode,
+        distanceText: resp.data.rows[0].elements[0].distance.text,
+        distanceValue: resp.data.rows[0].elements[0].distance.value,
+        durationText: resp.data.rows[0].elements[0].duration.text,
+        durationValue: resp.data.rows[0].elements[0].duration.value
+      }
+    })
+    .catch(err => console.log('error from google distance API is', err))
+}
+
+const getTravelDistances = (coords, dests, userTravelPrefs) => {
+  const destinationStr = dests.reduce((queryStr, dest) => {
+    return queryStr + `place_id:${dest}|`
+  }, '');
+
+  console.log('destinationStr is', destinationStr);
+  const params = {
+    key: apiKey,
+    origins: `${coords.lat},${coords.lng}`,
+    destinations: destinationStr.slice(0, -1), //get rid of last pipe
+    units: 'imperial',
+    mode: userTravelPrefs.mode || 'driving'
+  }
+
+  return axios.get('https://maps.googleapis.com/maps/api/distancematrix/json?', {params: params})
+    .then(resp => {
+      return resp.data;
+      // return {
+      //   mode: userTravelPrefs.mode,
+      //   distanceText: resp.data.rows[0].elements[0].distance.text,
+      //   distanceValue: resp.data.rows[0].elements[0].distance.value,
+      //   durationText: resp.data.rows[0].elements[0].duration.text,
+      //   durationValue: resp.data.rows[0].elements[0].duration.value
+      // }
+  })
+    .catch(err => console.log('error from google distance API is', err))
+}
+
 exports.convertAddressToLatLon = convertAddressToLatLon;
-exports.getPlace = getPlace;
 exports.getPlaces = getPlaces;
+exports.getTravelDistance = getTravelDistance;
+exports.getTravelDistances = getTravelDistances;
 
 
 
