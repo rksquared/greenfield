@@ -11,27 +11,6 @@ const convertAddressToLatLon = (address) => {
     .catch(err => console.log('err trying to get lat/lon from google:', err)) //not sure if this needs to be here or should just be chained
 };
 
-const getPlace = (coords, searchTerms) => {
-  /*
-  searchTerms are something like {type: 'bank', query: 'chase', radius: '50'}
-  */
-//  const testCoords = {lat: 40.750576, lng: -73.97643719999999}; //organize this data better
-//  const searchTerms = {type: 'bank', query: 'chase', radius: '50'};
- const params = {
-   key: apiKey,
-   location: `${coords.lat},${coords.lng}`,
-   radius: searchTerms.radius,
-   type: searchTerms.type,
-   keyword: searchTerms.query
- };
- return axios.get('https://maps.googleapis.com/maps/api/place/nearbysearch/json?', {params: params})
-  .then(resp => {
-    console.log('resp from google places is', JSON.stringify(resp.data.results));
-    return resp.data.results;
-  })
-  .catch(err => console.log('error from google places API is', err))
-}
-
 const getPlaces = (coords, searchArr) => {
   //map searchArr to promises
   const searchPromises = searchArr.map((searchTerms) => {
@@ -56,7 +35,6 @@ const getPlaces = (coords, searchArr) => {
 }
 
 exports.convertAddressToLatLon = convertAddressToLatLon;
-exports.getPlace = getPlace;
 exports.getPlaces = getPlaces;
 
 
