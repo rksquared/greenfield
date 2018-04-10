@@ -15,4 +15,10 @@ app.post('/search', (req, res) => {
   .catch(() => console.log('Sorry, please enter a valid address')) //send error code and message asking user to try again
 });
 
+app.get('/places', (req, res) => {
+  google.getPlaces('dummy', 'data')
+    .then(results => console.log('results from googleAPI are', results))
+    .catch(err => console.log('err in get/places is', err))
+})
+
 app.listen(port, () => console.log(`listening on port ${port}`));
