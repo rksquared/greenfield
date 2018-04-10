@@ -9,6 +9,9 @@
 -- Table 'users'
 -- 
 -- ---
+CREATE DATABASE IF NOT EXISTS `thero`;
+
+USE `thero`;
 
 DROP TABLE IF EXISTS `users`;
 		
