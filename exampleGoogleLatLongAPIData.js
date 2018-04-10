@@ -1,5 +1,4 @@
 // example data using Hack Reactor's lat/lon, radius=50, type=bank, keyword=chase
-
 {
    "html_attributions" : [],
    "results" : [
