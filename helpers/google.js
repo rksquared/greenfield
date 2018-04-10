@@ -34,8 +34,32 @@ const getPlaces = (coords, searchArr) => {
   return Promise.all(searchPromises);
 }
 
+const getTravelDistance = (coords, placeID, userTravelPrefs) => {
+  // TODO: Currently only gives travel times if driving...add support for walking, transit
+  const params = {
+    key: apiKey,
+    origins: `${coords.lat},${coords.lng}`,
+    destinations: `place_id:${placeID}`,
+    units: 'imperial',
+    mode: userTravelPrefs.mode
+  }
+
+  return axios.get('https://maps.googleapis.com/maps/api/distancematrix/json?', {params: params})
+    .then(resp => {
+      return {
+        mode: userTravelPrefs.mode,
+        distanceText: resp.data.rows[0].elements[0].distance.text,
+        distanceValue: resp.data.rows[0].elements[0].distance.value,
+        durationText: resp.data.rows[0].elements[0].duration.text,
+        durationValue: resp.data.rows[0].elements[0].duration.value
+      }
+    })
+    .catch(err => console.log('error from google distance API is', err))
+}
+
 exports.convertAddressToLatLon = convertAddressToLatLon;
 exports.getPlaces = getPlaces;
+exports.getTravelDistance = getTravelDistance;
 
 
 

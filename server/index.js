@@ -37,4 +37,26 @@ app.get('/places', (req, res) => {
     }) 
 });
 
+app.get('/distance', (req, res) => {
+  //hard coded test data
+  const testAddress = '369 Lexington Ave, New York NY';
+  const testPlaceID = "ChIJVZZL0gFZwokR97jnexo4Z44"; //we should have this for all places as a result of the places API
+  const userTravelPrefs = {
+    mode: 'walking' // driving is default mode, also supports walking and bicycling
+  }
+  
+  google.convertAddressToLatLon(testAddress)
+    .then((coords) => {
+      return google.getTravelDistance(coords, testPlaceID, userTravelPrefs);
+    })
+    .then((data) => {
+      console.log('travel distance data is', data);
+      res.send(data);
+    })
+    .catch((err) => { //send error code and message asking user to try again
+      console.log('err searching:', err);
+      res.status(500).send(err);
+    }) 
+});
+
 app.listen(port, () => console.log(`listening on port ${port}`));
