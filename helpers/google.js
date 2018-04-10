@@ -25,9 +25,18 @@ const getPlaces = (coords, searchArr) => {
     //return a promise
     return axios.get('https://maps.googleapis.com/maps/api/place/nearbysearch/json?', {params: params})
       .then(resp => {
-        console.log('resp from google places is', JSON.stringify(resp.data.results));
+        console.log('resp from google places for single place is', JSON.stringify(resp.data.results));
         return resp.data.results;
       })
+      /*GOAL: Add something like
+        {"mode":"walking",
+        "distanceText":"0.4 mi",
+        "distanceValue":668,
+        "durationText":"9 mins",
+        "durationValue":536}
+      to each member of resp.data.results
+      WILL HAVE TO BE ANOTHER MAP
+      */
       .catch(err => console.log('error from google places API is', err))
   })
   //return the mapped set of promises
@@ -57,9 +66,33 @@ const getTravelDistance = (coords, placeID, userTravelPrefs) => {
     .catch(err => console.log('error from google distance API is', err))
 }
 
+const getTravelDistances = (coords, dests, userTravelPrefs) => {
+  const params = {
+    key: apiKey,
+    origins: `${coords.lat},${coords.lng}`,
+    destinations: `place_id:${dests[0]}|place_id:${dests[1]}`,
+    units: 'imperial',
+    mode: userTravelPrefs.mode
+  }
+
+  return axios.get('https://maps.googleapis.com/maps/api/distancematrix/json?', {params: params})
+    .then(resp => {
+      return resp.data;
+      // return {
+      //   mode: userTravelPrefs.mode,
+      //   distanceText: resp.data.rows[0].elements[0].distance.text,
+      //   distanceValue: resp.data.rows[0].elements[0].distance.value,
+      //   durationText: resp.data.rows[0].elements[0].duration.text,
+      //   durationValue: resp.data.rows[0].elements[0].duration.value
+      // }
+  })
+    .catch(err => console.log('error from google distance API is', err))
+}
+
 exports.convertAddressToLatLon = convertAddressToLatLon;
 exports.getPlaces = getPlaces;
 exports.getTravelDistance = getTravelDistance;
+exports.getTravelDistances = getTravelDistances;
 
 
 
