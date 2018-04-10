@@ -67,12 +67,17 @@ const getTravelDistance = (coords, placeID, userTravelPrefs) => {
 }
 
 const getTravelDistances = (coords, dests, userTravelPrefs) => {
+  const destinationStr = dests.reduce((queryStr, dest) => {
+    return queryStr + `place_id:${dest}|`
+  }, '');
+
+  console.log('destinationStr is', destinationStr);
   const params = {
     key: apiKey,
     origins: `${coords.lat},${coords.lng}`,
-    destinations: `place_id:${dests[0]}|place_id:${dests[1]}`,
+    destinations: destinationStr.slice(0, -1), //get rid of last pipe
     units: 'imperial',
-    mode: userTravelPrefs.mode
+    mode: userTravelPrefs.mode || 'driving'
   }
 
   return axios.get('https://maps.googleapis.com/maps/api/distancematrix/json?', {params: params})

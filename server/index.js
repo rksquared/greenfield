@@ -15,21 +15,19 @@ app.get('/places', (req, res) => {
 
   const complicatedQuery = [
     {type: 'bank', query: 'chase', radius: '50'},
-    // {type: 'supermarket', radius: '500'},
-    // {type: 'liquor_store', radius: '500'},
+    {type: 'supermarket', radius: '500'},
+    {type: 'liquor_store', radius: '500'},
     {type: 'gym', query: 'equinox', radius: '500'}
   ];
+  //end of test data
 
   google.convertAddressToLatLon(testAddress)
     .then((coords) => { // use lat/lng to chain the next API call
       return google.getPlaces(coords, complicatedQuery);
     }) 
     .then((places) => {
-      // console.log('results from getPlaces are', places);
-      // if there are no results, either the query needs to be broadened
-      // or the address was wrong, so send a message asking the user to try again
       if (places.length) res.send(places);
-      else res.send('No results, please try again');
+      else res.send('No results, please try again'); //no results so need to try again
     })
     .catch((err) => { //send error code and message asking user to try again
       console.log('err searching:', err);
@@ -44,6 +42,7 @@ app.get('/distance', (req, res) => {
   const userTravelPrefs = {
     mode: 'walking' // driving is default mode, also supports walking and bicycling
   }
+  //end of test data
   
   google.convertAddressToLatLon(testAddress)
     .then((coords) => {
@@ -62,17 +61,20 @@ app.get('/distance', (req, res) => {
 app.get('/distances', (req, res) => {
   //hard coded test data
   const testAddress = '369 Lexington Ave, New York NY';
-  const placeIDs = ["ChIJVZZL0gFZwokR97jnexo4Z44", "ChIJzd_ZRgJZwokRyh-FQISS7GI"]; //we should have this for all places as a result of the places API
+  const testPlaceIDs = [
+    "ChIJVZZL0gFZwokR97jnexo4Z44", "ChIJt5cK5gNZwokR4S9PcCtCTcQ", "ChIJt5cK5gNZwokRhY1eWF9Wwdg"
+  ]; //we should have this for all places as a result of the places API
   const userTravelPrefs = {
     mode: 'walking' // driving is default mode, also supports walking and bicycling
   }
+  //end of test data
   
   google.convertAddressToLatLon(testAddress)
     .then((coords) => {
-      return google.getTravelDistances(coords, placeIDs, userTravelPrefs);
+      return google.getTravelDistances(coords, testPlaceIDs, userTravelPrefs);
     })
     .then((data) => {
-      console.log('dat data is', data);
+      console.log('travel distance data is', data);
       res.send(data);
     })
     .catch((err) => { //send error code and message asking user to try again
