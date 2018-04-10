@@ -12,6 +12,13 @@ app.post('/search', (req, res) => {
   const testAddress = '369 Lexington Ave, New York NY';
   const badAddress = '5';
   const query = {type: 'bank', query: 'chase', radius: '50'};
+
+  const complicatedQuery = [
+    {type: 'bank', query: 'chase', radius: '50'},
+    {type: 'supermarket', radius: '500'},
+    {type: 'gym', query: 'equinox', radius: '500'}
+  ]
+
   google.convertAddressToLatLon(testAddress)
   .then((coords) => {
     return google.getPlaces(coords, query)
@@ -27,6 +34,30 @@ app.post('/search', (req, res) => {
     console.log('err searching:', err);
     res.status(500).send(err);
   }) //send error code and message asking user to try again
+});
+
+app.get('/test', (req, res) => {
+  const testAddress = '369 Lexington Ave, New York NY';
+  const badAddress = '5';
+  const query = {type: 'bank', query: 'chase', radius: '50'};
+
+  const complicatedQuery = [
+    {type: 'bank', query: 'chase', radius: '50'},
+    {type: 'supermarket', radius: '500'},
+    {type: 'liquor_store', radius: '500'},
+    {type: 'gym', query: 'equinox', radius: '500'}
+  ];
+
+  google.convertAddressToLatLon(testAddress)
+    .then((coords) => {
+      return google.getManyPlaces(coords, complicatedQuery);
+    })
+    .then(results => {
+      console.log('results from getManyPlaces are', results);
+      res.send(results);
+    })
+    .catch(err => console.log(err))
+
 });
 
 app.get('/places', (req, res) => {
