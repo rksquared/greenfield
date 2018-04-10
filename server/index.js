@@ -95,4 +95,24 @@ app.get(`/testdb`, (req, res) => {
   });
 })
 
+//testing routes
+
+app.post('/login', function (req, res) {
+  console.log(req)
+  // include controller for database query 
+  res.send('recieved username')
+});
+
+app.post('/preferences', function (req, res) {
+  console.log(req)
+  // include controller for database query 
+  res.send('recieved preferences')
+});
+
+app.post('/googleApi', function (req, res) {
+  console.log(req)
+  // include controller for database query 
+  res.send('address received')
+});
+
 app.listen(port, () => console.log(`listening on port ${port}`));
