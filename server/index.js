@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const axios = require('axios');
 const google = require('../helpers/google.js');
+const {createUser} = require(`../helpers/dbHelpers.js`);
 const port = 3000;
 let app = express();
 
@@ -82,5 +83,16 @@ app.get('/distances', (req, res) => {
       res.status(500).send(err);
     }) 
 });
+
+
+//test the db and helper functions
+app.get(`/testdb`, (req, res) => {
+  console.log(`incoming get request recieved at "/testdb"`);
+
+  createUser({username: `rahul`, password: `pw`}, (err, data) => {
+    if (err) {return console.error(`error when creating user ${err}`);}
+    res.send(`ROMA VICTA`);
+  });
+})
 
 app.listen(port, () => console.log(`listening on port ${port}`));
