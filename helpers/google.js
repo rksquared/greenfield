@@ -11,7 +11,7 @@ const convertAddressToLatLon = (address) => {
     .catch(err => console.log('err trying to get lat/lon from google:', err)) //not sure if this needs to be here or should just be chained
 };
 
-const getPlaces = (coords, searchTerms) => {
+const getPlace = (coords, searchTerms) => {
   /*
   searchTerms are something like {type: 'bank', query: 'chase', radius: '50'}
   */
@@ -32,7 +32,7 @@ const getPlaces = (coords, searchTerms) => {
   .catch(err => console.log('error from google places API is', err))
 }
 
-const getManyPlaces = (coords, searchArr) => {
+const getPlaces = (coords, searchArr) => {
   //map searchArr to promises
   const searchPromises = searchArr.map((searchTerms) => {
     //set up params for each search in the searchArr
@@ -56,8 +56,8 @@ const getManyPlaces = (coords, searchArr) => {
 }
 
 exports.convertAddressToLatLon = convertAddressToLatLon;
+exports.getPlace = getPlace;
 exports.getPlaces = getPlaces;
-exports.getManyPlaces = getManyPlaces;
 
 
 
