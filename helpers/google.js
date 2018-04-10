@@ -5,21 +5,21 @@ const convertAddressToLatLon = (address) => {
   const params = {address: address, key: apiKey};
   return axios.get('https://maps.googleapis.com/maps/api/geocode/json?', {params: params})
     .then(resp => {
-      // console.log('lat and lon inside halpers are', resp.data.results[0].geometry.location.lat, resp.data.results[0].geometry.location.lng);
+      console.log('lat and lon inside halpers are', resp.data.results[0].geometry.location.lat, resp.data.results[0].geometry.location.lng);
       return resp.data.results[0].geometry.location; //returns a chainable promise
     })
     .catch(err => console.log('err trying to get lat/lon from google:', err)) //not sure if this needs to be here or should just be chained
 };
 
-const getPlaces = (coords, searchTermz) => {
+const getPlaces = (coords, searchTerms) => {
   /*
   searchTerms are something like {type: 'bank', query: 'chase', radius: '50'}
   */
- const testCoords = {lat: 40.750576, lng: -73.97643719999999}; //organize this data better
- const searchTerms = {type: 'bank', query: 'chase', radius: '50'};
+//  const testCoords = {lat: 40.750576, lng: -73.97643719999999}; //organize this data better
+//  const searchTerms = {type: 'bank', query: 'chase', radius: '50'};
  const params = {
    key: apiKey,
-   location: `${testCoords.lat},${testCoords.lng}`,
+   location: `${coords.lat},${coords.lng}`,
    radius: searchTerms.radius,
    type: searchTerms.type,
    keyword: searchTerms.query
