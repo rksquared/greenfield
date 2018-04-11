@@ -1,9 +1,11 @@
 import React from 'react';
 import axios from 'axios';
+import {withRouter} from 'react-router-dom';
 
 class Preferences extends React.Component{
 	constructor(props){
 		super(props)
+		//this.props.location.username is the username
 		this.state = {
         bank: '',
         supermarket: '',
@@ -16,7 +18,7 @@ class Preferences extends React.Component{
         laund: false,
         haircare: false,
         transit: false   
-    }
+		}
     this.handlePreferenceState = this.handlePreferenceState.bind(this)
     this.sendPreferencesToServer = this.sendPreferencesToServer.bind(this)
 	}
@@ -31,10 +33,20 @@ class Preferences extends React.Component{
 	}
 
 	sendPreferencesToServer() {
-		let userPrefs = {preferences: this.state}
-		axios.post('/preferences', userPrefs)
-		.then((response) => console.log('preferences sent!'))
-		.catch((err) => console.log('error in sending preferences'))
+		let userPrefs = {
+			preferences: this.state,
+			username: this.props.location.username
+		}
+		axios.post('/preferences', {params: userPrefs})
+		.then((response) => {
+			console.log('preferences sent!')
+			this.props.history.push({
+				pathname: '/search',
+				prefs: this.state,
+				username: this.props.location.username
+			});
+		})
+		.catch((err) => console.log('err saving prefs', err))
 	}
 
 	render() {
@@ -43,7 +55,8 @@ class Preferences extends React.Component{
 		return (
 			<div> 
 			<h4>Preferences Component</h4>
-			Search Preferences 
+			Search Preferences
+			<pre>{JSON.stringify(this.props.history)}</pre>
 				<div>Preferred Bank</div>
 				<input name="bank" 
 							 type="text" 	 
@@ -106,7 +119,7 @@ class Preferences extends React.Component{
 	}
 }
 
-export default Preferences;
+export default withRouter(Preferences);
 
 // App
 	//Login

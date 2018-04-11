@@ -11,28 +11,31 @@ app.use(express.static(__dirname + '/../react-client/dist'));
 
 app.post('/places', (req, res) => {
   //below is just test data but this should ultimately come from user data/front-end
-  const testAddress = '369 Lexington Ave, New York NY';
-  // const badAddress = '5';
-  // const simpleQuery = [{type: 'bank', query: 'chase'}]; //query should be in an array
+  // const testAddress = '369 Lexington Ave, New York NY';
+  // // const badAddress = '5';
+  // // const simpleQuery = [{type: 'bank', query: 'chase'}]; //query should be in an array
 
-  // const complicatedQuery = [
-  //   {type: 'bank', query: 'chase', radius: '50'},
-  //   {type: 'supermarket', radius: '500'},
-  //   {type: 'restaurant', radius: '500'},
-  //   {type: 'gym', query: 'equinox', radius: '500'}
+  // // const complicatedQuery = [
+  // //   {type: 'bank', query: 'chase', radius: '50'},
+  // //   {type: 'supermarket', radius: '500'},
+  // //   {type: 'restaurant', radius: '500'},
+  // //   {type: 'gym', query: 'equinox', radius: '500'}
+  // // ];
+
+  // const complicatedQueryNoRadius = [
+  //   {type: 'bank', query: 'chase'},
+  //   {type: 'supermarket'},
+  //   {type: 'restaurant', query:'coffee'},
+  //   {type: 'gym', query: 'equinox'}
   // ];
-
-  const complicatedQueryNoRadius = [
-    {type: 'bank', query: 'chase'},
-    {type: 'supermarket'},
-    {type: 'restaurant', query:'coffee'},
-    {type: 'gym', query: 'equinox'}
-  ];
   //end of test data
 
-  google.convertAddressToLatLon(testAddress)
+  const userQuery = req.body.params;
+  console.log('userquery is', userQuery);
+
+  google.convertAddressToLatLon(userQuery.address)
     .then((coords) => { // use lat/lng to chain the next API call
-      return google.getPlaces(coords, complicatedQueryNoRadius);
+      return google.getPlaces(coords, userQuery.prefs); //have to map object into array
     }) 
     .then((places) => {
       if (places.length) res.send(places);
@@ -133,10 +136,34 @@ app.get('/', function (req, res) {
   res.send('recieved username')
 });
 
+app.post('/login', (req, res) => {
+  console.log(req.body.user);
+  //req.body.user is the username
+  //needs to check DB
+  //mock user preferences
+  const prefs = [
+    {type: 'bank', query: 'chase'},
+    {type: 'supermarket'},
+    {type: 'restaurant', query:'coffee'},
+    {type: 'gym', query: 'equinox'}
+  ];
+  const blank = [];
+  res.send(blank);
+  // res.status(400).send({
+  //   message: 'error!'
+  // });
+})
+
 app.post('/preferences', function (req, res) {
-  console.log(req)
+  // console.log(req)
   // include controller for database query 
-  res.send('recieved preferences')
+  // res.send('recieved preferences')
+  console.log(req.body);
+  let userPrefs = req.body.params.preferences;
+  let username = req.body.params.username;
+  //save to database
+  console.log(`username is ${username} and prefs are ${JSON.stringify(userPrefs)}`)
+  res.send();
 });
 
 app.post('/googleApi', function (req, res) {

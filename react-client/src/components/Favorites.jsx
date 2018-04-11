@@ -1,11 +1,5 @@
 import React from 'react';
 
-const Favorites = (props) => (
-  <div>
-
-  </div>
-)
-
 class Favorites extends React.Component {
 	constructor(props){
 		super(props)
