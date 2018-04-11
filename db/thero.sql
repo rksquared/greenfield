@@ -44,11 +44,18 @@ CREATE TABLE saved_places (
   category_icon VARCHAR(500),
   place_lat DECIMAL,
   place_long DECIMAL,
+  radius INTEGER,
   travel_dist DECIMAL
 );
 
-CREATE TABLE destination_to_place_join (
+CREATE TABLE destination_to_place (
   id INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  google_id_saved_places INTEGER,
-  id_saved_destination INTEGER
+  google_id_saved_places VARCHAR(255),
+  id_saved_destination INTEGER,
+    FOREIGN KEY (google_id_saved_places)
+        REFERENCES saved_places(google_id)
+        ON DELETE CASCADE,
+    FOREIGN KEY (id_saved_destination)
+        REFERENCES saved_destinations(id)
+        ON DELETE CASCADE
 );
