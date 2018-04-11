@@ -27,7 +27,8 @@ const getPlaces = (coords, searchArr) => {
     const params = {
       key: apiKey,
       location: `${coords.lat},${coords.lng}`,
-      radius: searchTerms.radius,
+      // radius: searchTerms.radius,
+      rankby: 'distance',
       type: searchTerms.type,
       keyword: searchTerms.query
     };
