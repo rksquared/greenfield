@@ -174,7 +174,7 @@ app.post('/login', (req, res) => {
     {type: 'gym', query: 'equinox'}
   ];
   const blank = [];
-  res.send(prefs);
+  res.send(blank);
   // res.status(400).send({
   //   message: 'error!'
   // });
