@@ -1,8 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import axios from 'axios';
-// import { BrowserRouter as Router, Route, Link } from "react-router-dom";
-
+import { BrowserRouter as Router, Route, Link, Switch} from "react-router-dom";
 
 import Login from './components/Login.jsx';
 import Search from './components/Search.jsx';
@@ -16,17 +15,20 @@ class App extends React.Component {
   }
 
   render () {
+
     return (
+
       <div>
-      <h4>App Component</h4>
-        <ul>
-          <li>
-            <Login />
-            <Preferences />
-            <Search />
-          </li>
-        </ul>
+        <h4>App Component</h4>
+          <Router>
+          <Switch>
+              <Login exact path="/" component={Login}/>
+              <Preferences  path="/preferences" component={Preferences}/>
+              <Search path="/search" component={Search}/>
+          </Switch>
+          </Router> 
       </div>
+
       )
    }
 }

@@ -7,6 +7,7 @@ const port = 3000;
 let app = express();
 
 app.use(bodyParser.json());
+app.use(express.static(__dirname + '/../react-client/dist'));
 
 app.post('/places', (req, res) => {
   //below is just test data but this should ultimately come from user data/front-end
@@ -126,7 +127,7 @@ app.get(`/testdb`, (req, res) => {
 
 //testing routes
 
-app.post('/login', function (req, res) {
+app.get('/', function (req, res) {
   console.log(req)
   // include controller for database query 
   res.send('recieved username')

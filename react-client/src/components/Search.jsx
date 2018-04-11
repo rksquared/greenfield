@@ -20,6 +20,8 @@ class Search extends React.Component {
 		.then((response) => {
 			console.log('places fetched')
 			// will need to update result state with data
+			this.setState({results: response})
+			
 		})
 		.catch((err) => console.log('error in fetching places'))
 	}
@@ -41,7 +43,10 @@ class Search extends React.Component {
 				
 				<div>
 				</div>
+				<li>
 
+				</li>
+					}
 			</div>
 		)
 	}
