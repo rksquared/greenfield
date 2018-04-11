@@ -4,6 +4,7 @@ const axios = require('axios');
 const google = require('../helpers/google.js');
 const {createUser, savePlace} = require(`../helpers/dbHelpers.js`);
 const port = 3000;
+const utils = require('../helpers/utils.js');
 let app = express();
 
 app.use(bodyParser.json());
@@ -31,11 +32,12 @@ app.post('/places', (req, res) => {
   //end of test data
 
   const userQuery = req.body.params;
-  console.log('userquery is', userQuery);
+  // console.log('userquery is', userQuery);
+  const formattedQuery = utils.mapReactObj(userQuery.prefs);
 
   google.convertAddressToLatLon(userQuery.address)
     .then((coords) => { // use lat/lng to chain the next API call
-      return google.getPlaces(coords, userQuery.prefs); //have to map object into array
+      return google.getPlaces(coords, formattedQuery); //have to map object into array
     }) 
     .then((places) => {
       if (places.length) res.send(places);
@@ -46,6 +48,24 @@ app.post('/places', (req, res) => {
       res.status(500).send(err);
     }) 
 });
+
+const mapReactObj = (reactObj) => {
+	let googleArr = [];
+	for (var type in reactObj) {
+		if (reactObj[type] === true || reactObj[type] === 'any') {
+			console.log('el is', type, reactObj[type]);
+			googleArr.push({
+				type: type
+			})
+		} else if (reactObj[type].length) {
+			googleArr.push({
+				type: type,
+				query: reactObj[type]
+			})
+		}
+	}
+	return googleArr;
+}
 
 app.get('/distance', (req, res) => {
   //hard coded test data
