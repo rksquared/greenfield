@@ -25,8 +25,9 @@ const getPlaces = (coords, searchArr) => {
     //return a promise
     return axios.get('https://maps.googleapis.com/maps/api/place/nearbysearch/json?', {params: params})
       .then(resp => {
-        console.log('resp from google places for single place is', JSON.stringify(resp.data.results));
-        return resp.data.results;
+        // console.log('resp from google places for single place is', JSON.stringify(resp.data.results));
+        // return resp.data.results;
+        return simplifyGoogleResults(resp.data.results);
       })
       /*GOAL: Add something like
         {"mode":"walking",
@@ -41,6 +42,23 @@ const getPlaces = (coords, searchArr) => {
   })
   //return the mapped set of promises
   return Promise.all(searchPromises);
+}
+
+const simplifyGoogleResults = (data) => {
+  console.log('data is ', data);
+  return data.map((results) => {
+    // console.log('queryResults is', queryResults);
+    return {
+      latitude: results.geometry.location.lat,
+      longitude: results.geometry.location.lng,
+      icon: results.icon,
+      id: results.place_id,
+      name: results.name,
+      rating: results.rating,
+      address: results.vicinity,
+      photoHTML: results.photos ? results.photos[0].html_attributions[0] : ''
+    }
+  })
 }
 
 const getTravelDistance = (coords, placeID, userTravelPrefs) => {
