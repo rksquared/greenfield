@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const axios = require('axios');
 const google = require('../helpers/google.js');
-const {createUser} = require(`../helpers/dbHelpers.js`);
+const {createUser, savePlace} = require(`../helpers/dbHelpers.js`);
 const port = 3000;
 let app = express();
 
@@ -17,7 +17,7 @@ app.get('/places', (req, res) => {
   const complicatedQuery = [
     {type: 'bank', query: 'chase', radius: '50'},
     {type: 'supermarket', radius: '500'},
-    {type: 'liquor_store', radius: '500'},
+    {type: 'restaurant', radius: '500'},
     {type: 'gym', query: 'equinox', radius: '500'}
   ];
   //end of test data
@@ -89,10 +89,32 @@ app.get('/distances', (req, res) => {
 app.get(`/testdb`, (req, res) => {
   console.log(`incoming get request recieved at "/testdb"`);
 
-  createUser({username: `rahul`, password: `pw`}, (err, data) => {
-    if (err) {return console.error(`error when creating user ${err}`);}
-    res.send(`ROMA VICTA`);
-  });
+  // createUser({username: `rahul`, password: `pw`}, (err, data) => {
+  //   if (err) {return console.error(`error when creating user ${err}`);}
+  //   res.send(`ROMA VICTA`);
+  // });
+  const testPlace = {
+    "type": "bank",
+    "place_lat": 40.7501328,
+    "place_long": -73.976499,
+    "category_icon": "https:\/\/maps.gstatic.com\/mapfiles\/place_api\/icons\/bank_dollar-71.png",
+    "google_id": "ChIJY9UK5gNZwokR60pPEpS1WKE",
+    "place_name": "Chase Bank",
+    "rating": 3,
+    "place_address": "355 Lexington Ave, New York",
+    "thumbnail": "<a href=\"https:\/\/maps.google.com\/maps\/contrib\/100338243655446815049\/photos\">Chase Bank<\/a>",
+    "price_level": ""
+  };
+
+  savePlace(testPlace, (err, results) => {
+    if (err) {
+      console.log('err is', err);
+      res.end('boo');
+    } else {
+      console.log('results are', results);
+      res.end('results!');
+    }
+  })
 })
 
 //testing routes

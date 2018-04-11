@@ -13,6 +13,15 @@ const convertAddressToLatLon = (address) => {
 
 const getPlaces = (coords, searchArr) => {
   //map searchArr to promises
+  /*
+  search array is something like 
+  [
+    {type: 'bank', query: 'chase', radius: '50'},
+    {type: 'supermarket', radius: '500'},
+    {type: 'liquor_store', radius: '500'},
+    {type: 'gym', query: 'equinox', radius: '500'}
+  ];
+  */
   const searchPromises = searchArr.map((searchTerms) => {
     //set up params for each search in the searchArr
     const params = {
@@ -27,7 +36,7 @@ const getPlaces = (coords, searchArr) => {
       .then(resp => {
         // console.log('resp from google places for single place is', JSON.stringify(resp.data.results));
         // return resp.data.results;
-        return simplifyGoogleResults(resp.data.results);
+        return simplifyGoogleResults(resp.data.results, searchTerms.type);
       })
       /*GOAL: Add something like
         {"mode":"walking",
@@ -44,19 +53,21 @@ const getPlaces = (coords, searchArr) => {
   return Promise.all(searchPromises);
 }
 
-const simplifyGoogleResults = (data) => {
+const simplifyGoogleResults = (data, type) => {
   console.log('data is ', data);
   return data.map((results) => {
     // console.log('queryResults is', queryResults);
     return {
-      latitude: results.geometry.location.lat,
-      longitude: results.geometry.location.lng,
-      icon: results.icon,
-      id: results.place_id,
-      name: results.name,
+      type: type,
+      place_lat: results.geometry.location.lat,
+      place_long: results.geometry.location.lng,
+      category_icon: results.icon,
+      google_id: results.place_id,
+      place_name: results.name,
       rating: results.rating,
-      address: results.vicinity,
-      photoHTML: results.photos ? results.photos[0].html_attributions[0] : ''
+      place_address: results.vicinity,
+      thumbnail: results.photos ? results.photos[0].html_attributions[0] : '',
+      price_level: results.price_level ? results.price_level : ''
     }
   })
 }
