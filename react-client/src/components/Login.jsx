@@ -27,7 +27,7 @@ class Login extends React.Component{
 			} else {
 				this.props.history.push({
 					pathname: '/search',
-					prefs: response.data,
+					savedPrefs: response.data,
 					username: this.state.username
 				}); //send with response.data (prefs) as props
 			}

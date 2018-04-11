@@ -17,8 +17,11 @@ class Search extends React.Component {
 	fetchClosestPlaces(){
 		let params = {
 			address: this.state.address,
-			prefs: this.props.location.prefs
+			newPrefs: this.props.location.prefs,
+			savedPrefs: this.props.location.savedPrefs
 		}
+		console.log('new prefs are', params.newPrefs)
+		console.log('savedprefs are', params.savedPrefs)
 
 		axios.post('/places', {params: params})
 		.then((response) => {

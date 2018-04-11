@@ -33,7 +33,13 @@ app.post('/places', (req, res) => {
 
   const userQuery = req.body.params;
   // console.log('userquery is', userQuery);
-  const formattedQuery = utils.mapReactObj(userQuery.prefs);
+  let formattedQuery;
+  if (userQuery.newPrefs) {
+    formattedQuery = utils.mapReactObj(userQuery.newPrefs);
+  } else {
+    formattedQuery = userQuery.savedPrefs;
+  }
+  // const formattedQuery = utils.mapReactObj(userQuery.prefs);
 
   google.convertAddressToLatLon(userQuery.address)
     .then((coords) => { // use lat/lng to chain the next API call
@@ -168,7 +174,7 @@ app.post('/login', (req, res) => {
     {type: 'gym', query: 'equinox'}
   ];
   const blank = [];
-  res.send(blank);
+  res.send(prefs);
   // res.status(400).send({
   //   message: 'error!'
   // });
