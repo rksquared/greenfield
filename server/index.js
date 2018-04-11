@@ -29,12 +29,13 @@ app.post('/places', (req, res) => {
   //   {type: 'gym', query: 'equinox'}
   // ];
   //end of test data
-  console.log('req is', req);
+
   const userQuery = req.body.params;
+  console.log('userquery is', userQuery);
 
   google.convertAddressToLatLon(userQuery.address)
     .then((coords) => { // use lat/lng to chain the next API call
-      return google.getPlaces(coords, userQuery.prefs);
+      return google.getPlaces(coords, userQuery.prefs); //have to map object into array
     }) 
     .then((places) => {
       if (places.length) res.send(places);
@@ -147,17 +148,22 @@ app.post('/login', (req, res) => {
     {type: 'gym', query: 'equinox'}
   ];
   const blank = [];
-  res.send(prefs);
+  res.send(blank);
   // res.status(400).send({
   //   message: 'error!'
   // });
 })
 
 app.post('/preferences', function (req, res) {
-  console.log(req)
+  // console.log(req)
   // include controller for database query 
   // res.send('recieved preferences')
-
+  console.log(req.body);
+  let userPrefs = req.body.params.preferences;
+  let username = req.body.params.username;
+  //save to database
+  console.log(`username is ${username} and prefs are ${JSON.stringify(userPrefs)}`)
+  res.send();
 });
 
 app.post('/googleApi', function (req, res) {

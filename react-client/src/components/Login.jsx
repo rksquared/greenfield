@@ -20,11 +20,15 @@ class Login extends React.Component{
 			console.log('username sent!')
 			console.log('test prefs are', response.data);
 			if (response.data.length === 0) {
-				this.props.history.push('/preferences');
+				this.props.history.push({
+					pathname: '/preferences',
+					username: this.state.username
+				});
 			} else {
 				this.props.history.push({
 					pathname: '/search',
-					prefs: response.data
+					prefs: response.data,
+					username: this.state.username
 				}); //send with response.data (prefs) as props
 			}
       
