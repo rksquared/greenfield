@@ -133,10 +133,29 @@ app.get('/', function (req, res) {
   res.send('recieved username')
 });
 
+app.post('/login', (req, res) => {
+  console.log(req.body.user);
+  //req.body.user is the username
+  //needs to check DB
+  //mock user preferences
+  const prefs = [
+    {type: 'bank', query: 'chase'},
+    {type: 'supermarket'},
+    {type: 'restaurant', query:'coffee'},
+    {type: 'gym', query: 'equinox'}
+  ];
+  const blank = [];
+  res.send(blank);
+  // res.status(400).send({
+  //   message: 'error!'
+  // });
+})
+
 app.post('/preferences', function (req, res) {
   console.log(req)
   // include controller for database query 
-  res.send('recieved preferences')
+  // res.send('recieved preferences')
+
 });
 
 app.post('/googleApi', function (req, res) {
