@@ -1,5 +1,6 @@
 import React from 'react';
 import axios from 'axios';
+import {withRouter} from 'react-router-dom';
 
 class Login extends React.Component{
 
@@ -12,9 +13,13 @@ class Login extends React.Component{
 
   // sending name to database
   sendUsernameToServer(){
+    console.log('function reached')
   	let userObj = {user: this.state.username}
 	axios.post('/login', userObj)
-  	.then((response) => console.log('username sent!'))
+  	.then((response) => {
+      console.log('username sent!')
+      this.props.history.push('/search')
+    })
   	.catch((err) => console.log(''))
   }
 
@@ -27,20 +32,23 @@ class Login extends React.Component{
   }
 
   render() { 
+    console.log(this.props.history)
   	return (
 	<div>
 	    <h4>Login Component</h4>
 		Username
-			<input 	type="text"
+			<input 	
+          type="text"
 					value={this.state.username} 
 					onChange={this.handleUsernameState}/>
 		Password
 			<input 	type="text"/>
 			<button onClick={()=> {this.sendUsernameToServer()}}>LOGIN</button>
 			<button>SIGNUP</button>
+      <button onClick={() => {this.props.history.push('/search')}}>Change Router</button>
 	</div>
   		)
   	}
 }
 
-export default Login;
+export default withRouter(Login);
