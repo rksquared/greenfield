@@ -28,12 +28,25 @@ const createUser = (user, cb) => {
 
 
 //save new search
+const savePlace = (place, cb) => {
+  connection.query(`INSERT INTO saved_places SET ?`, place, (err, results) => {
+    if (err) {
+      console.error(`Error saving ${place.place_name}: ${err}`)
+    }
+    cb(err, results);
+  });
+}
+
+const saveDestination = (destination, cb) => {
+
+}
 
 
 //retrieve user data (i.e. all saved searches for a given user)
 
 
 module.exports.createUser = createUser;
+module.exports.savePlace = savePlace;
 
 
 // old DB join table sql
