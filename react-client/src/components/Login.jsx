@@ -22,7 +22,10 @@ class Login extends React.Component{
 			if (response.data.length === 0) {
 				this.props.history.push('/preferences');
 			} else {
-				this.props.history.push('/search');
+				this.props.history.push({
+					pathname: '/search',
+					prefs: response.data
+				}); //send with response.data (prefs) as props
 			}
       
     })

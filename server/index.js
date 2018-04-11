@@ -11,28 +11,30 @@ app.use(express.static(__dirname + '/../react-client/dist'));
 
 app.post('/places', (req, res) => {
   //below is just test data but this should ultimately come from user data/front-end
-  const testAddress = '369 Lexington Ave, New York NY';
-  // const badAddress = '5';
-  // const simpleQuery = [{type: 'bank', query: 'chase'}]; //query should be in an array
+  // const testAddress = '369 Lexington Ave, New York NY';
+  // // const badAddress = '5';
+  // // const simpleQuery = [{type: 'bank', query: 'chase'}]; //query should be in an array
 
-  // const complicatedQuery = [
-  //   {type: 'bank', query: 'chase', radius: '50'},
-  //   {type: 'supermarket', radius: '500'},
-  //   {type: 'restaurant', radius: '500'},
-  //   {type: 'gym', query: 'equinox', radius: '500'}
+  // // const complicatedQuery = [
+  // //   {type: 'bank', query: 'chase', radius: '50'},
+  // //   {type: 'supermarket', radius: '500'},
+  // //   {type: 'restaurant', radius: '500'},
+  // //   {type: 'gym', query: 'equinox', radius: '500'}
+  // // ];
+
+  // const complicatedQueryNoRadius = [
+  //   {type: 'bank', query: 'chase'},
+  //   {type: 'supermarket'},
+  //   {type: 'restaurant', query:'coffee'},
+  //   {type: 'gym', query: 'equinox'}
   // ];
-
-  const complicatedQueryNoRadius = [
-    {type: 'bank', query: 'chase'},
-    {type: 'supermarket'},
-    {type: 'restaurant', query:'coffee'},
-    {type: 'gym', query: 'equinox'}
-  ];
   //end of test data
+  console.log('req is', req);
+  const userQuery = req.body.params;
 
-  google.convertAddressToLatLon(testAddress)
+  google.convertAddressToLatLon(userQuery.address)
     .then((coords) => { // use lat/lng to chain the next API call
-      return google.getPlaces(coords, complicatedQueryNoRadius);
+      return google.getPlaces(coords, userQuery.prefs);
     }) 
     .then((places) => {
       if (places.length) res.send(places);
@@ -145,7 +147,7 @@ app.post('/login', (req, res) => {
     {type: 'gym', query: 'equinox'}
   ];
   const blank = [];
-  res.send(blank);
+  res.send(prefs);
   // res.status(400).send({
   //   message: 'error!'
   // });

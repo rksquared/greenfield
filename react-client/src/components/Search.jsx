@@ -9,16 +9,21 @@ class Search extends React.Component {
 			address: '',
 			results: []
 		}
+		//this.props.location.prefs is the prefs object
 		this.fetchClosestPlaces = this.fetchClosestPlaces.bind(this)
 		this.handleAddressState = this.handleAddressState.bind(this)
 	}
 
 	fetchClosestPlaces(){
-		let addressObj = {address: this.state.address}
+		let params = {
+			address: this.state.address,
+			prefs: this.props.location.prefs
+		}
 
-		axios.post('/googleApi', addressObj)
+		axios.post('/places', {params: params})
 		.then((response) => {
 			console.log('places fetched')
+			console.log(response.data)
 			// will need to update result state with data
 			this.setState({results: response})
 			
@@ -36,6 +41,7 @@ class Search extends React.Component {
 		return (
 			<div>
 				<h4>Search Component</h4>
+				<pre>{JSON.stringify(this.props.location.prefs)}</pre>
 				<input type="text"
 							 value={this.state.address}
 							 onChange={this.handleAddressState}/>
