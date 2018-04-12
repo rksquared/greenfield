@@ -82,13 +82,13 @@ const checkUser = (user, cb) => {
                       long: dest_long,
                       rating: rating,
                       places: places.map((place, idx) => {
-                        place = place.join('');
+                        place = place[0];
                         place['travel_time'] = travelTimeInfo[idx][1];
                         place['distance'] = travelTimeInfo[idx][0];
                         return place;
                       })
                     };
-                    console.log('what are pushing to fave', fave)
+                    // console.log('what are pushing to fave', fave)
 
                     // faves.push(fave);
                     resolve(fave);
