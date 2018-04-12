@@ -5,3 +5,4 @@ bower_components/
 build/
 react-client/dist/bundle.js
 config.js
+package-lock.json
