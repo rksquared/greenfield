@@ -50,7 +50,7 @@ const getPlaces = (coords, searchArr) => {
           .then(resp => {
             console.log('old data is', data.oldData);
             console.log('new data is', resp.data);
-            return {oldData: data.oldData, newData: resp.data};
+            return addDistanceInfo(data.oldData, resp.data);
           })
       })
       // .then(data => console.log('last then was reached, data is ', JSON.stringify(data)))
@@ -77,6 +77,16 @@ const simplifyGoogleResults = (data, type) => {
     }
   })
 }
+
+const addDistanceInfo = (oldData, newData) => {
+  return oldData.map((placeInfo, i) => {
+    const distInfo = newData.rows[0].elements[i];
+    return Object.assign({
+      distance: distInfo.distance.text,
+      travel_time: distInfo.duration.text
+    }, placeInfo);
+  })
+};
 
 const getTravelDistances = (coords, dests, userTravelPrefs) => {
   const destinationStr = dests.reduce((queryStr, dest) => {
