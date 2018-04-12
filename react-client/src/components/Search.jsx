@@ -3,6 +3,7 @@ import axios from 'axios';
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 import FlatButton from 'material-ui/FlatButton';
 import AppBar from 'material-ui/AppBar';
+import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
 // import MaterialButton from './MaterialButton';
 
@@ -89,7 +90,7 @@ class Search extends React.Component {
 							 type="text"
 							 value={this.state.address}
 							 onChange={this.handleAddressState}/>
-				<button onClick={() => {this.fetchClosestPlaces()}}>Search</button>	 
+				<RaisedButton onClick={() => {this.fetchClosestPlaces()}}>Search</RaisedButton>	 
 			</div>
 		)
 	}
