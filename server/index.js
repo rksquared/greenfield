@@ -10,6 +10,12 @@ let app = express();
 app.use(bodyParser.json());
 app.use(express.static(__dirname + '/../react-client/dist'));
 
+app.post('/save', (req, res) => {
+  console.log('trying to save', req.body.params.place);
+  //SAVE PLACE INTO DB
+  res.send('server is trying to save');
+})
+
 app.post('/places', (req, res) => {
   const userQuery = req.body.params;
   // console.log('userquery is', userQuery);

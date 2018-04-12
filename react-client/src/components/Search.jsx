@@ -12,6 +12,7 @@ class Search extends React.Component {
 		//this.props.location.prefs is the prefs object
 		this.fetchClosestPlaces = this.fetchClosestPlaces.bind(this)
 		this.handleAddressState = this.handleAddressState.bind(this)
+		this.saveFavorite = this.saveFavorite.bind(this)
 	}
 
 	fetchClosestPlaces(){
@@ -40,6 +41,14 @@ class Search extends React.Component {
 		}, console.log(this.state.address))
 	}
 
+	saveFavorite(place) {
+		console.log(`${JSON.stringify(place)} was clicked!`)
+		const params = {place: place};
+		axios.post('/save', {params: params})
+			.then((resp) => console.log('resp after saving is', resp))
+			.catch((err) => console.log('err trying to save fave is', err))
+	}
+
 	render(){
 		return (
 			<div>
@@ -56,7 +65,7 @@ class Search extends React.Component {
 							<ul>{place.distance} away</ul>
 							<ul>{place.travel_time} away</ul>
 							</li>
-							<button>Save</button>
+							<button onClick={() => {this.saveFavorite(place)}}>Save</button>
 							</div>
 					})
 				)
