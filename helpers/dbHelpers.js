@@ -35,26 +35,46 @@ const checkUser = (user, cb) => {
           return dest.id;
         });
 
-        console.log(`destination IDs: ${destinationIDs}`)
+        console.log(`destination IDs: ${destinationIDs}`);
 
-        connection.query(`SELECT google_id_saved_places, travel_time, distance FROM destination_to_place WHERE id_saved_destination= ? `, [destinationIDs], (err, matches) => {
+        let joinQuery = destinationIDs.map((destination) => {
+          return `SELECT google_id_saved_places, travel_time, distance FROM destination_to_place WHERE id_saved_destination= ${destination}; `;
+        }).join('');
+
+        console.log(`JOIN QUERY from mapped destination ids: ${joinQuery}`);
+
+        connection.query(joinQuery, (err, matches) => {
           if (err) {return console.error(`Error selecting placeIds with the from join table: ${err}`);}
 
           console.log(`Results from retrieving matching placeIds from join table: ${JSON.stringify(matches)}`);
 
-          let googlePlaceIDs = matches.map((match) => {
-            console.log(`match.google_id_saved_places: ${match.google_id_saved_places}, typeof ${typeof match.google_id_saved_places}`)
-            return match.google_id_saved_places;
+          let googlePlaceIDs = matches.map((destMatch) => {
+            return destMatch.map((match) => {
+              console.log(`match.google_id_saved_places: ${match.google_id_saved_places}, typeof ${typeof match.google_id_saved_places}`)
+              return match.google_id_saved_places;
+            });
           });
 
           console.log(`mapped google place ids: ${googlePlaceIDs}, typeof: ${Array.isArray(googlePlaceIDs)}`);
 
-          let travelTimeInfo = matches.map((match) => {
-            return [match.destination, match.travel_time];
+          let bulkPlaceQuery = googlePlaceIDs.map((dest, idx) => {
+            return dest.map((google_id) => {
+              console.log(`each google id: ${google_id}`);
+              return `SELECT * FROM saved_places WHERE google_id= '${google_id}'; `;
+            }).join('')
+          }).join('');
+
+          console.log(`BULK QUERY from mapped google_ids: ${bulkPlaceQuery}`);
+
+          let travelTimeInfo = matches.map((destMatch) => {
+              return destMatch.map((match) => {
+                return [match.destination, match.travel_time];
+              });
           });
 
-          connection.query(`SELECT * FROM saved_places WHERE google_id= ?`, googlePlaceIDs, (err, places) => {
-            if (err) {return console.error(`Error selecting places with the filtered google_id from join table: ${err}`);}
+
+          connection.query(bulkPlaceQuery, (err, places) => {
+            if (err) {return console.error(`Error selecting places with the filtered google_id from saved_places: ${err}`);}
   
             console.log(`Success! All matching place objects: ${JSON.stringify(places)}`);
 
