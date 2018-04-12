@@ -14,8 +14,26 @@ app.post('/save', (req, res) => {
   console.log('trying to save', req.body.params.place);
   console.log('user is', req.body.params.username);
   console.log('dest is', req.body.params.address)
+  console.log('create time is', new Date(Date.parse(req.body.params.create_time)), ' typeof: ', typeof req.body.params.create_time);
+
+  let destination = {
+    "username": req.body.params.username,
+    "address": req.body.params.address,
+    create_time: new Date(Date.parse(req.body.params.create_time))  
+  }
+
+  saveDestination(destination, [req.body.params.place], (err, results) => {
+    console.log('in the saveDestination callback');
+    if (err) {
+      console.log('err is', err);
+      res.send('boo');
+    }
+    console.log('results are', results);
+    res.send(results);
+  });
+
   //SAVE PLACE INTO DB
-  res.send('server is trying to save');
+  // res.send('server is trying to save');
 })
 
 app.post('/places', (req, res) => {
@@ -23,6 +41,8 @@ app.post('/places', (req, res) => {
 
   //format query differently based on whether it came from user or from DB
   const formattedQuery = userQuery.newPrefs ? utils.mapReactObj(userQuery.newPrefs) : userQuery.savedPrefs;
+
+  console.log('get userQuery from front', userQuery);
 
   google.convertAddressToLatLon(userQuery.address)
     .then((coords) => { // use lat/lng to chain the next API call
@@ -82,25 +102,25 @@ app.post('/places', (req, res) => {
           return;
         });
 
-        const testDestination = {
-          "username": "brian",
-          "address": "369 Lexington Avenue",
-          "create_time": new Date()
-        };
+        // const testDestination = {
+        //   "username": "brian",
+        //   "address": "369 Lexington Avenue",
+        //   "create_time": new Date()
+        // };
 
         console.log('correctly flattening api results?', JSON.stringify(flattened[0]));
 
-        saveDestination(testDestination, flattened, (err, results) => {
-          console.log('in the saveDestination callback');
-          if (err) {
-            console.log('err is', err);
-            res.send('boo');
-          } 
-            console.log('results are', results);
-            res.send(results);
-        });
+        // saveDestination(testDestination, flattened, (err, results) => {
+        //   console.log('in the saveDestination callback');
+        //   if (err) {
+        //     console.log('err is', err);
+        //     res.send('boo');
+        //   } 
+        //     console.log('results are', results);
+        //     res.send(results);
+        // });
 
-        // res.send(formattedPlaces);
+        res.send(JSON.stringify(flattened));
       }
       else res.send('No results, please try again'); //no results so need to try again
     })
@@ -124,9 +144,9 @@ app.post('/login', (req, res) => {
   //needs to check DB
   //mock user preferences
   const prefs = [
-    {type: 'bank', query: 'chase'},
-    {type: 'supermarket'},
-    {type: 'restaurant', query:'coffee'},
+    // {type: 'bank', query: 'chase'},
+    // {type: 'supermarket'},
+    // {type: 'restaurant', query:'coffee'},
     {type: 'gym', query: 'equinox'}
   ];
   const blank = [];
