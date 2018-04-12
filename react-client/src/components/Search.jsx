@@ -1,5 +1,8 @@
 import React from 'react';
 import axios from 'axios';
+import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
+import FlatButton from 'material-ui/FlatButton';
+// import MaterialButton from './MaterialButton';
 
 class Search extends React.Component {
 
@@ -56,20 +59,26 @@ class Search extends React.Component {
 		return (
 			<div>
 				<h4>Search Component</h4>
-				<pre>{JSON.stringify(this.state.results)}</pre>
 				{this.state.results.map(result => {
 					return (
 						result.map(place => {
-							return <div><li>
-							<ul>{place.type}</ul>
-							<ul><img src={place.category_icon}></img></ul>
-							<ul>{place.place_name}</ul>
-							<ul>{place.place_address}</ul>
-							<ul>{place.distance} away</ul>
-							<ul>{place.travel_time} away</ul>
-							</li>
-							<button onClick={() => {this.saveFavorite(place)}}>Save</button>
-							</div>
+							return <Card>
+								<CardHeader
+									title={place.place_name}
+									avatar={place.category_icon}
+									subtitle={place.type}
+									actAsExpander={true}
+									showExpandableButton={true}
+								/>
+								<CardText expandable={true}>
+								{place.place_address}<br></br>
+								{place.distance}<br></br>
+								{place.travel_time} <br></br>
+								</CardText>
+							<CardActions>
+								<FlatButton onClick={() => {this.saveFavorite(place)}}>Save</FlatButton>
+							</CardActions>
+							</Card>
 					})
 				)
 				})}

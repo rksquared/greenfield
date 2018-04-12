@@ -1,6 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 import {withRouter} from 'react-router-dom';
+import MaterialButton from './MaterialButton.jsx';
 
 class Login extends React.Component{
 
@@ -59,6 +60,7 @@ class Login extends React.Component{
 					onChange={this.handleUsernameState}/>
 		Password
 			<input 	type="text"/>
+			<MaterialButton/>
 			<button onClick={()=> {this.sendUsernameToServer()}}>LOGIN</button>
 			<button>SIGNUP</button>
       <button onClick={() => {this.props.history.push('/preferences')}}>Change Router</button>
