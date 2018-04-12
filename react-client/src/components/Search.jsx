@@ -28,7 +28,7 @@ class Search extends React.Component {
 			console.log('places fetched')
 			console.log(response.data)
 			// will need to update result state with data
-			this.setState({results: response})
+			this.setState({results: response.data})
 			
 		})
 		.catch((err) => console.log('error in fetching places'))
@@ -44,7 +44,23 @@ class Search extends React.Component {
 		return (
 			<div>
 				<h4>Search Component</h4>
-				<pre>{JSON.stringify(this.props.location.prefs)}</pre>
+				<pre>{JSON.stringify(this.state.results)}</pre>
+				{this.state.results.map(result => {
+					return (
+						result.map(place => {
+							return <div><li>
+							<ul>{place.type}</ul>
+							<ul><img src={place.category_icon}></img></ul>
+							<ul>{place.place_name}</ul>
+							<ul>{place.place_address}</ul>
+							<ul>{place.distance} away</ul>
+							<ul>{place.travel_time} away</ul>
+							</li>
+							<button>Save</button>
+							</div>
+					})
+				)
+				})}
 				<input type="text"
 							 value={this.state.address}
 							 onChange={this.handleAddressState}/>
