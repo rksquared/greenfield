@@ -31,11 +31,13 @@ class Search extends React.Component {
 		console.log('savedprefs are', params.savedPrefs)
 
 		axios.post('/places', {params: params})
-		.then((response) => {
+		.then(({data}) => {
 			console.log('places fetched')
-			console.log(response.data)
+			console.log('whats the response', data)
 			// will need to update result state with data
-			this.setState({results: response.data})
+			this.setState({
+				results: [data]
+			});
 			
 		})
 		.catch((err) => console.log('error in fetching places'))
@@ -51,7 +53,8 @@ class Search extends React.Component {
 		const params = {
 			place: place,
 			address: this.state.address,
-			username: this.props.location.username
+			username: this.props.location.username,
+			create_time: new Date()
 		};
 		axios.post('/save', {params: params})
 			.then((resp) => console.log('resp after saving is', resp))

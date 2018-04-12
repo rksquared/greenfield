@@ -70,7 +70,7 @@ const checkUser = (user, cb) => {
                   connection.query(bulkPlaceQuery, (err, places) => {
                     if (err) { return console.error(`Error selecting places with the filtered google_id from saved_places: ${err}`); }
 
-                    // console.log(`Success! All matching place objects for ${eachDest}: ${JSON.stringify(places)}`);
+                    console.log(`Success! All matching place objects for ${eachDest}: ${JSON.stringify(places)}`);
 
                     let { dest_address, create_time, dest_lat, dest_long, rating } = destinations[topLevelMapIdx];
 
@@ -82,7 +82,9 @@ const checkUser = (user, cb) => {
                       long: dest_long,
                       rating: rating,
                       places: places.map((place, idx) => {
-                        place = place[0];
+                        if (Array.isArray(place)) {
+                          place = place[0];
+                        }
                         place['travel_time'] = travelTimeInfo[idx][1];
                         place['distance'] = travelTimeInfo[idx][0];
                         return place;
