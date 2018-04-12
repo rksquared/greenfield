@@ -12,14 +12,9 @@ app.use(express.static(__dirname + '/../react-client/dist'));
 
 app.post('/places', (req, res) => {
   const userQuery = req.body.params;
-  // console.log('userquery is', userQuery);
-  let formattedQuery;
-  if (userQuery.newPrefs) {
-    formattedQuery = utils.mapReactObj(userQuery.newPrefs);
-  } else {
-    formattedQuery = userQuery.savedPrefs;
-  }
-  // const formattedQuery = utils.mapReactObj(userQuery.prefs);
+
+  //format query differently based on whether it came from user or from DB
+  const formattedQuery = userQuery.newPrefs ? utils.mapReactObj(userQuery.newPrefs) : userQuery.savedPrefs;
 
   google.convertAddressToLatLon(userQuery.address)
     .then((coords) => { // use lat/lng to chain the next API call
@@ -36,70 +31,42 @@ app.post('/places', (req, res) => {
     }) 
 });
 
-const mapReactObj = (reactObj) => {
-	let googleArr = [];
-	for (var type in reactObj) {
-		if (reactObj[type] === true || reactObj[type] === 'any') {
-			console.log('el is', type, reactObj[type]);
-			googleArr.push({
-				type: type
-			})
-		} else if (reactObj[type].length) {
-			googleArr.push({
-				type: type,
-				query: reactObj[type]
-			})
-		}
-	}
-	return googleArr;
-}
+//TO FILL IN
 
-app.get('/distance', (req, res) => {
-  //hard coded test data
-  const testAddress = '369 Lexington Ave, New York NY';
-  const testPlaceID = "ChIJVZZL0gFZwokR97jnexo4Z44"; //we should have this for all places as a result of the places API
-  const userTravelPrefs = {
-    mode: 'walking' // driving is default mode, also supports walking and bicycling
-  }
-  //end of test data
-  
-  google.convertAddressToLatLon(testAddress)
-    .then((coords) => {
-      return google.getTravelDistance(coords, testPlaceID, userTravelPrefs);
-    })
-    .then((data) => {
-      console.log('travel distance data is', data);
-      res.send(data);
-    })
-    .catch((err) => { //send error code and message asking user to try again
-      console.log('err searching:', err);
-      res.status(500).send(err);
-    }) 
+app.get('/', function (req, res) {
+  console.log(req)
+  // include controller for database query 
+  res.send('recieved username')
 });
 
-app.get('/distances', (req, res) => {
-  //hard coded test data
-  const testAddress = '369 Lexington Ave, New York NY';
-  const testPlaceIDs = [
-    "ChIJVZZL0gFZwokR97jnexo4Z44", "ChIJt5cK5gNZwokR4S9PcCtCTcQ", "ChIJt5cK5gNZwokRhY1eWF9Wwdg"
-  ]; //we should have this for all places as a result of the places API
-  const userTravelPrefs = {
-    mode: 'walking' // driving is default mode, also supports walking and bicycling
-  }
-  //end of test data
-  
-  google.convertAddressToLatLon(testAddress)
-    .then((coords) => {
-      return google.getTravelDistances(coords, testPlaceIDs, userTravelPrefs);
-    })
-    .then((data) => {
-      console.log('travel distance data is', data);
-      res.send(data);
-    })
-    .catch((err) => { //send error code and message asking user to try again
-      console.log('err searching:', err);
-      res.status(500).send(err);
-    }) 
+app.post('/login', (req, res) => {
+  console.log(req.body.user);
+  //req.body.user is the username
+  //needs to check DB
+  //mock user preferences
+  const prefs = [
+    {type: 'bank', query: 'chase'},
+    {type: 'supermarket'},
+    {type: 'restaurant', query:'coffee'},
+    {type: 'gym', query: 'equinox'}
+  ];
+  const blank = [];
+  res.send(prefs);
+  // res.status(400).send({
+  //   message: 'error!'
+  // });
+})
+
+app.post('/preferences', function (req, res) {
+  // console.log(req)
+  // include controller for database query 
+  // res.send('recieved preferences')
+  console.log(req.body);
+  let userPrefs = req.body.params.preferences;
+  let username = req.body.params.username;
+  //save to database
+  console.log(`username is ${username} and prefs are ${JSON.stringify(userPrefs)}`)
+  res.send();
 });
 
 //create test users
@@ -165,48 +132,6 @@ app.get(`/testdb`, (req, res) => {
   });
 })
 
-//testing routes
 
-app.get('/', function (req, res) {
-  console.log(req)
-  // include controller for database query 
-  res.send('recieved username')
-});
-
-app.post('/login', (req, res) => {
-  console.log(req.body.user);
-  //req.body.user is the username
-  //needs to check DB
-  //mock user preferences
-  const prefs = [
-    {type: 'bank', query: 'chase'},
-    {type: 'supermarket'},
-    {type: 'restaurant', query:'coffee'},
-    {type: 'gym', query: 'equinox'}
-  ];
-  const blank = [];
-  res.send(blank);
-  // res.status(400).send({
-  //   message: 'error!'
-  // });
-})
-
-app.post('/preferences', function (req, res) {
-  // console.log(req)
-  // include controller for database query 
-  // res.send('recieved preferences')
-  console.log(req.body);
-  let userPrefs = req.body.params.preferences;
-  let username = req.body.params.username;
-  //save to database
-  console.log(`username is ${username} and prefs are ${JSON.stringify(userPrefs)}`)
-  res.send();
-});
-
-app.post('/googleApi', function (req, res) {
-  console.log(req)
-  // include controller for database query 
-  res.send('address received')
-});
 
 app.listen(port, () => console.log(`listening on port ${port}`));
