@@ -12,16 +12,6 @@ const convertAddressToLatLon = (address) => {
 };
 
 const getPlaces = (coords, searchArr) => {
-  //map searchArr to promises
-  /*
-  search array is something like 
-  [
-    {type: 'bank', query: 'chase', radius: '50'},
-    {type: 'supermarket', radius: '500'},
-    {type: 'liquor_store', radius: '500'},
-    {type: 'gym', query: 'equinox', radius: '500'}
-  ];
-  */
   const searchPromises = searchArr.map((searchTerms) => {
     //set up params for each search in the searchArr
     const params = {
@@ -39,15 +29,31 @@ const getPlaces = (coords, searchArr) => {
         // return resp.data.results;
         return simplifyGoogleResults(resp.data.results, searchTerms.type);
       })
-      /*GOAL: Add something like
-        {"mode":"walking",
-        "distanceText":"0.4 mi",
-        "distanceValue":668,
-        "durationText":"9 mins",
-        "durationValue":536}
-      to each member of resp.data.results
-      WILL HAVE TO BE ANOTHER MAP
-      */
+      .then(data => {
+        const placeIds = data.map(place => {
+          return place.google_id;
+        });
+        const destinationStr = placeIds.reduce((queryStr, dest) => {
+          return queryStr + `place_id:${dest}|`
+        }, '');
+        const params = {
+          key: apiKey,
+          origins: `${coords.lat},${coords.lng}`,
+          destinations: destinationStr.slice(0, -1), //get rid of last pipe
+          units: 'imperial',
+          mode: 'driving'
+        };
+        return {oldData: data, params: params}
+      })
+      .then(data => {
+        return axios.get('https://maps.googleapis.com/maps/api/distancematrix/json?', {params: data.params})
+          .then(resp => {
+            console.log('old data is', data.oldData);
+            console.log('new data is', resp.data);
+            return {oldData: data.oldData, newData: resp.data};
+          })
+      })
+      // .then(data => console.log('last then was reached, data is ', JSON.stringify(data)))
       .catch(err => console.log('error from google places API is', err))
   })
   //return the mapped set of promises
@@ -57,7 +63,6 @@ const getPlaces = (coords, searchArr) => {
 const simplifyGoogleResults = (data, type) => {
   console.log('data is ', data);
   return data.map((results) => {
-    // console.log('queryResults is', queryResults);
     return {
       type: type,
       place_lat: results.geometry.location.lat,
@@ -71,29 +76,6 @@ const simplifyGoogleResults = (data, type) => {
       price_level: results.price_level ? results.price_level : ''
     }
   })
-}
-
-const getTravelDistance = (coords, placeID, userTravelPrefs) => {
-  // TODO: Currently only gives travel times if driving...add support for walking, transit
-  const params = {
-    key: apiKey,
-    origins: `${coords.lat},${coords.lng}`,
-    destinations: `place_id:${placeID}`,
-    units: 'imperial',
-    mode: userTravelPrefs.mode
-  }
-
-  return axios.get('https://maps.googleapis.com/maps/api/distancematrix/json?', {params: params})
-    .then(resp => {
-      return {
-        mode: userTravelPrefs.mode,
-        distanceText: resp.data.rows[0].elements[0].distance.text,
-        distanceValue: resp.data.rows[0].elements[0].distance.value,
-        durationText: resp.data.rows[0].elements[0].duration.text,
-        durationValue: resp.data.rows[0].elements[0].duration.value
-      }
-    })
-    .catch(err => console.log('error from google distance API is', err))
 }
 
 const getTravelDistances = (coords, dests, userTravelPrefs) => {
@@ -126,7 +108,6 @@ const getTravelDistances = (coords, dests, userTravelPrefs) => {
 
 exports.convertAddressToLatLon = convertAddressToLatLon;
 exports.getPlaces = getPlaces;
-exports.getTravelDistance = getTravelDistance;
 exports.getTravelDistances = getTravelDistances;
 
 
