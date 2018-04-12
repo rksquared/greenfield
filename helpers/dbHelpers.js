@@ -27,7 +27,7 @@ const checkUser = (user, cb) => {
       let userId = results[0].id;
 
       connection.query(`SELECT * FROM saved_destinations WHERE id_users= ${userId}`, (err, destinations) => {
-        if (err) {return console.error(`Error in selecting saved destinations: ${err}`);}
+        if (err) { return console.error(`Error in selecting saved destinations: ${err}`); }
 
         console.log('results from querying saved destinations for matches with userId', JSON.stringify(destinations));
 
@@ -37,68 +37,157 @@ const checkUser = (user, cb) => {
 
         console.log(`destination IDs: ${destinationIDs}`);
 
-        let joinQuery = destinationIDs.map((destination) => {
-          return `SELECT google_id_saved_places, travel_time, distance FROM destination_to_place WHERE id_saved_destination= ${destination}; `;
-        }).join('');
 
-        console.log(`JOIN QUERY from mapped destination ids: ${joinQuery}`);
+        const getAllFavorites = (destinationIDs, callback) => {
+          let faves = [];
+          Promise.all(destinationIDs.map((eachDest, topLevelMapIdx) => {
+            return new Promise((resolve, reject) => {
+              connection.query(`SELECT google_id_saved_places, travel_time, distance FROM destination_to_place WHERE id_saved_destination= ${eachDest}; `, (err, matches) => {
+                if (err) { return console.error(`Error selecting placeIds with the from join table: ${err}`); }
 
-        connection.query(joinQuery, (err, matches) => {
-          if (err) {return console.error(`Error selecting placeIds with the from join table: ${err}`);}
+                // console.log(`Results from retrieving matching placeIds from join table: ${JSON.stringify(matches)}`);
 
-          console.log(`Results from retrieving matching placeIds from join table: ${JSON.stringify(matches)}`);
+                let googlePlaceIDs = matches.map((match) => {
+                  return match.google_id_saved_places;
+                });
 
-          let googlePlaceIDs = matches.map((destMatch) => {
-            return destMatch.map((match) => {
-              console.log(`match.google_id_saved_places: ${match.google_id_saved_places}, typeof ${typeof match.google_id_saved_places}`)
-              return match.google_id_saved_places;
-            });
-          });
+                // console.log(`mapped google place ids: ${googlePlaceIDs}, typeof: ${Array.isArray(googlePlaceIDs)}`);
 
-          console.log(`mapped google place ids: ${googlePlaceIDs}, typeof: ${Array.isArray(googlePlaceIDs)}`);
+                let bulkPlaceQuery = googlePlaceIDs.map((google_id) => {
+                  return `SELECT * FROM saved_places WHERE google_id= '${google_id}'; `;
+                }).join('');
 
-          let bulkPlaceQuery = googlePlaceIDs.map((dest, idx) => {
-            return dest.map((google_id) => {
-              console.log(`each google id: ${google_id}`);
-              return `SELECT * FROM saved_places WHERE google_id= '${google_id}'; `;
-            }).join('')
-          }).join('');
+                // console.log(`BULK QUERY from mapped google_ids: ${bulkPlaceQuery}`);
 
-          console.log(`BULK QUERY from mapped google_ids: ${bulkPlaceQuery}`);
+                let travelTimeInfo = matches.map((match) => {
+                  return [match.destination, match.travel_time];
+                });
 
-          let travelTimeInfo = matches.map((destMatch) => {
-              return destMatch.map((match) => {
-                return [match.destination, match.travel_time];
+
+                resolve(new Promise((resolve, reject) => {
+                  console.log('bet you this runs when we thing it should')
+
+                  connection.query(bulkPlaceQuery, (err, places) => {
+                    if (err) { return console.error(`Error selecting places with the filtered google_id from saved_places: ${err}`); }
+
+                    // console.log(`Success! All matching place objects for ${eachDest}: ${JSON.stringify(places)}`);
+
+                    let { dest_address, create_time, dest_lat, dest_long, rating } = destinations[topLevelMapIdx];
+
+
+                    let fave = {
+                      address: dest_address,
+                      createdAd: create_time,
+                      lat: dest_lat,
+                      long: dest_long,
+                      rating: rating,
+                      places: places.map((place, idx) => {
+                        place = place[0];
+                        place['travel_time'] = travelTimeInfo[idx][1];
+                        place['distance'] = travelTimeInfo[idx][0];
+                        return place;
+                      })
+                    };
+                    // console.log('what are pushing to fave', fave)
+
+                    // faves.push(fave);
+                    resolve(fave);
+
+                    // console.log('faves on each map iteration', faves
+
+                  });
+
+
+                }))
               });
-          });
 
+                }); 
+              
+            })).then((vals) => {
+              console.log('is faves anything?', vals)
+              callback(vals)
+            })
+          
+          
+        }
 
-          connection.query(bulkPlaceQuery, (err, places) => {
-            if (err) {return console.error(`Error selecting places with the filtered google_id from saved_places: ${err}`);}
-  
-            console.log(`Success! All matching place objects: ${JSON.stringify(places)}`);
+        getAllFavorites(destinationIDs, (results) => {
 
-            let faves = destinations.reduce((userData, {dest_address, create_time, dest_lat, dest_long, rating}, idx) => {
-              let fave = {
-                address: dest_address,
-                createdAd: create_time,
-                lat: dest_lat,
-                long: dest_long,
-                rating: rating,
-                places: places,
-                travel_time: travelTimeInfo[idx][1],
-                distance: travelTimeInfo[idx][0]
-              }
+          // console.log('results correctly composed FINALLY', results);
+          cb(err, results);
+            // .then((res) => {
+            //   cb(err, res);
+            // })
+            // .catch((err) => {
+            //   cb(err);
+            // })
 
-              userData.push(fave);
-
-              return userData;
-            }, []);
-            
-            cb(err, faves);
-          });
-
+          // cb(err, results);
         });
+
+
+      //   let joinQuery = destinationIDs.map((destination) => {
+      //     return `SELECT google_id_saved_places, travel_time, distance FROM destination_to_place WHERE id_saved_destination= ${destination}; `;
+      //   }).join('');
+
+      //   console.log(`JOIN QUERY from mapped destination ids: ${joinQuery}`);
+
+      //   connection.query(joinQuery, (err, matches) => {
+      //     if (err) {return console.error(`Error selecting placeIds with the from join table: ${err}`);}
+
+      //     console.log(`Results from retrieving matching placeIds from join table: ${JSON.stringify(matches)}`);
+
+      //     let googlePlaceIDs = matches.map((destMatch) => {
+      //       return destMatch.map((match) => {
+      //         console.log(`match.google_id_saved_places: ${match.google_id_saved_places}, typeof ${typeof match.google_id_saved_places}`)
+      //         return match.google_id_saved_places;
+      //       });
+      //     });
+
+      //     console.log(`mapped google place ids: ${googlePlaceIDs}, typeof: ${Array.isArray(googlePlaceIDs)}`);
+
+      //     let bulkPlaceQuery = googlePlaceIDs.map((dest, idx) => {
+      //       return dest.map((google_id) => {
+      //         console.log(`each google id: ${google_id}`);
+      //         return `SELECT * FROM saved_places WHERE google_id= '${google_id}'; `;
+      //       }).join('')
+      //     }).join('');
+
+      //     console.log(`BULK QUERY from mapped google_ids: ${bulkPlaceQuery}`);
+
+      //     let travelTimeInfo = matches.map((destMatch) => {
+      //         return destMatch.map((match) => {
+      //           return [match.destination, match.travel_time];
+      //         });
+      //     });
+
+
+      //     connection.query(bulkPlaceQuery, (err, places) => {
+      //       if (err) {return console.error(`Error selecting places with the filtered google_id from saved_places: ${err}`);}
+  
+      //       console.log(`Success! All matching place objects: ${JSON.stringify(places)}`);
+
+      //       let faves = destinations.reduce((userData, {dest_address, create_time, dest_lat, dest_long, rating}, idx) => {
+      //         let fave = {
+      //           address: dest_address,
+      //           createdAd: create_time,
+      //           lat: dest_lat,
+      //           long: dest_long,
+      //           rating: rating,
+      //           places: places,
+      //           travel_time: travelTimeInfo[idx][1],
+      //           distance: travelTimeInfo[idx][0]
+      //         }
+
+      //         userData.push(fave);
+
+      //         return userData;
+      //       }, []);
+            
+      //       cb(err, faves);
+      //     });
+
+      //   });
 
       });
 
