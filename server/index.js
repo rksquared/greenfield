@@ -50,30 +50,7 @@ app.post('/places', (req, res) => {
     })
     .then((places) => {
       console.log('places inside index.js is', places)
-
       if (places.length) {
-
-        // let formattedPlaces = places.map((placeCat) => {
-        //   return placeCat !== undefined ? placeCat.map((place) => {
-        //     let formattedPlace = {
-        //       "type": place.type,
-        //       "google_id": place.google_id,
-        //       "place_name": place.place_name,
-        //       "place_address": place.place_address,
-        //       "rating": place.rating,
-        //       "price_level": place.price_level,
-        //       "thumbnail": place.thumbnail,
-        //       "category_icon": place.category_icon,
-        //       "place_lat": place.place_lat,
-        //       "place_long": place.place_long,
-        //       "distance": place.distance,
-        //       "travel_time": place.travel_time
-        //     };
-
-        //     return formattedPlace;
-        //   }) : placeCat;
-        // });
-
         let flattened = [];
         let formattedPlaces = places.map((placeCat) => {
 
@@ -101,25 +78,7 @@ app.post('/places', (req, res) => {
           console.log('flattened?', flattened[0]);
           return;
         });
-
-        // const testDestination = {
-        //   "username": "brian",
-        //   "address": "369 Lexington Avenue",
-        //   "create_time": new Date()
-        // };
-
         console.log('correctly flattening api results?', JSON.stringify(flattened[0]));
-
-        // saveDestination(testDestination, flattened, (err, results) => {
-        //   console.log('in the saveDestination callback');
-        //   if (err) {
-        //     console.log('err is', err);
-        //     res.send('boo');
-        //   } 
-        //     console.log('results are', results);
-        //     res.send(results);
-        // });
-
         res.send(JSON.stringify(flattened));
       }
       else res.send('No results, please try again'); //no results so need to try again
@@ -134,26 +93,25 @@ app.post('/places', (req, res) => {
 
 app.get('/', function (req, res) {
   console.log(req)
-  // include controller for database query 
-  res.send('recieved username')
+  res.send('received username')
 });
 
 app.post('/login', (req, res) => {
-  console.log(req.body.user);
+  console.log('user trying to login is', req.body.user);
   //req.body.user is the username
-  //needs to check DB
-  //mock user preferences
+  //check DB for user
+    //if user not found, send to signup page?
+    //if user found and has no prefs, send back blank array so React sends user to prefs
+    //if user found and has prefs, send back prefs
   const prefs = [
-    // {type: 'bank', query: 'chase'},
-    // {type: 'supermarket'},
+    {type: 'bank', query: 'chase'},
+    {type: 'supermarket'},
     // {type: 'restaurant', query:'coffee'},
     {type: 'gym', query: 'equinox'}
   ];
+
   const blank = [];
-  res.send(prefs);
-  // res.status(400).send({
-  //   message: 'error!'
-  // });
+  res.send(blank);
 })
 
 app.post('/preferences', function (req, res) {
@@ -164,7 +122,7 @@ app.post('/preferences', function (req, res) {
   let userPrefs = req.body.params.preferences;
   let username = req.body.params.username;
   //save to database
-  console.log(`username is ${username} and prefs are ${JSON.stringify(userPrefs)}`)
+  console.log(`username is ${username} and prefs are ${userPrefs}`)
   res.send();
 });
 
