@@ -35,17 +35,23 @@ const checkUser = (user, cb) => {
           return dest.id;
         });
 
-        connection.query(`SELECT google_id_saved_places FROM destination_to_place WHERE id_saved_destination= ?`, [destinationIDs], (err, placeIDs) => {
+        console.log(`destination IDs: ${destinationIDs}`)
+
+        connection.query(`SELECT google_id_saved_places, travel_time, distance FROM destination_to_place WHERE id_saved_destination= ? ;`, [destinationIDs], (err, matches) => {
           if (err) {return console.error(`Error selecting placeIds with the from join table: ${err}`);}
 
-          console.log(`Results from retrieving matching placeIds from join table: ${JSON.stringify(placeIDs)}`);
+          console.log(`Results from retrieving matching placeIds from join table: ${JSON.stringify(matches)}`);
 
-          let googlePlaceIDs = placeIDs.map((match) => {
+          let googlePlaceIDs = matches.map((match) => {
             console.log(`match.google_id_saved_places: ${match.google_id_saved_places}, typeof ${typeof match.google_id_saved_places}`)
             return match.google_id_saved_places;
           });
 
           console.log(`mapped google place ids: ${googlePlaceIDs}, typeof: ${Array.isArray(googlePlaceIDs)}`);
+
+          let travelTimeInfo = matches.map((match) => {
+            return [match.destination, match.travel_time];
+          });
 
           connection.query(`SELECT * FROM saved_places WHERE google_id= ?`, googlePlaceIDs, (err, places) => {
             if (err) {return console.error(`Error selecting places with the filtered google_id from join table: ${err}`);}
@@ -59,7 +65,9 @@ const checkUser = (user, cb) => {
                 lat: dest_lat,
                 long: dest_long,
                 rating: rating,
-                places: places
+                places: places,
+                travel_time: travelTimeInfo[idx][1],
+                distance: travelTimeInfo[idx][0]
               }
 
               userData.push(fave);
@@ -107,7 +115,7 @@ const saveDestination = (destination, places, cb) => {
 
   const storeDestination = `INSERT INTO saved_destinations SET id_users= (SELECT id FROM users WHERE username= '${destination.username}'), dest_address= '${destination.address}', create_time= '${destination.create_time.toMysqlFormat()}';`;
   
-  const storePlaces = ` INSERT IGNORE INTO saved_places (type, google_id, place_name, place_address, rating, price_level, thumbnail, category_icon, place_lat, place_long, radius, travel_dist) VALUES ?`;
+  const storePlaces = ` INSERT IGNORE INTO saved_places (type, google_id, place_name, place_address, rating, price_level, thumbnail, category_icon, place_lat, place_long) VALUES ?`;
   // console.log(`date reformat: ${destination.create_time.toMysqlFormat()} typeof: ${typeof destination.create_time.toMysqlFormat()}`)
   // console.log(`multi-line SQL statement: ${storeDestination + storePlaces}`);
   connection.query((storeDestination + storePlaces), [placesInsertionQuery(places)], (err, results) => {
@@ -123,12 +131,12 @@ const saveDestination = (destination, places, cb) => {
         console.log('result from select ID from desintation table query: ', result[0].id);
         
         places.forEach((place, idx) => {
-          bulkJoinFKIDs.push([result[0].id, placeIDs[idx]]);
+          bulkJoinFKIDs.push([result[0].id, placeIDs[idx], places[idx].distance, places[idx].travel_time]);
         })
 
         console.log('mapped out bulkJoin IDs', bulkJoinFKIDs);
 
-        connection.query(`INSERT INTO destination_to_place (id_saved_destination, google_id_saved_places) VALUES ?;`, [bulkJoinFKIDs], (err, results) => {
+        connection.query(`INSERT INTO destination_to_place (id_saved_destination, google_id_saved_places, distance, travel_time) VALUES ?;`, [bulkJoinFKIDs], (err, results) => {
           if (err) {return console.error(`Error saving destination/places in join table: ${err}`);}
           cb(err, results);
         });
@@ -147,7 +155,10 @@ const placesInsertionQuery = (places) => {
     let row = [];
     
     for (key in place) {
-      row.push(place[key]);
+      if (!(key === "travel_time" || key === "distance")) {
+        // console.log(`keys in bulk insertion formatting: ${key}`);
+        row.push(place[key]);
+      }
     }
 
     formattedArr.push(row);
