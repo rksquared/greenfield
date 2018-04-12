@@ -37,7 +37,7 @@ const checkUser = (user, cb) => {
 
         console.log(`destination IDs: ${destinationIDs}`)
 
-        connection.query(`SELECT google_id_saved_places, travel_time, distance FROM destination_to_place WHERE id_saved_destination= ? ;`, [destinationIDs], (err, matches) => {
+        connection.query(`SELECT google_id_saved_places, travel_time, distance FROM destination_to_place WHERE id_saved_destination= ? `, [destinationIDs], (err, matches) => {
           if (err) {return console.error(`Error selecting placeIds with the from join table: ${err}`);}
 
           console.log(`Results from retrieving matching placeIds from join table: ${JSON.stringify(matches)}`);
