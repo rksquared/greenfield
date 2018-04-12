@@ -52,10 +52,10 @@ CREATE TABLE destination_to_place (
   id INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,
   google_id_saved_places VARCHAR(255),
   id_saved_destination INTEGER,
-    FOREIGN KEY (google_id_saved_places)
-        REFERENCES saved_places(google_id)
-        ON DELETE CASCADE,
-    FOREIGN KEY (id_saved_destination)
-        REFERENCES saved_destinations(id)
-        ON DELETE CASCADE
+  FOREIGN KEY (google_id_saved_places)
+      REFERENCES saved_places(google_id)
+      ON DELETE CASCADE,
+  FOREIGN KEY (id_saved_destination)
+      REFERENCES saved_destinations(id)
+      ON DELETE CASCADE
 );

@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const axios = require('axios');
 const google = require('../helpers/google.js');
-const {createUser, savePlace} = require(`../helpers/dbHelpers.js`);
+const {createUser, saveDestination, checkUser} = require(`../helpers/dbHelpers.js`);
 const port = 3000;
 const utils = require('../helpers/utils.js');
 let app = express();
@@ -121,37 +121,67 @@ app.get('/distances', (req, res) => {
     }) 
 });
 
+//create test users
+app.get(`/tstuser`, (req, res) => {
+  checkUser({username: `brian`, password: `pw`}, (err, data) => {
+    if (err) {return console.error(`error when creating user ${err}`);}
+    res.send(`ROMA VICTA, data:${JSON.stringify(data)}`);
+  });
+})
+
 
 //test the db and helper functions
 app.get(`/testdb`, (req, res) => {
   console.log(`incoming get request recieved at "/testdb"`);
 
-  // createUser({username: `rahul`, password: `pw`}, (err, data) => {
-  //   if (err) {return console.error(`error when creating user ${err}`);}
-  //   res.send(`ROMA VICTA`);
-  // });
-  const testPlace = {
+  //should be a post and user = req.body.username
+
+  const testPlaces = [
+    {
     "type": "bank",
+    "google_id": "ChhhIJY9UK5gNZwokR60pPEpS1WKE",
+    "place_name": "Chase Bank",
+    "place_address": "355 Lexington Ave, New York",
+    "rating": 3,
+    "price_level": '',
+    "thumbnail": "<a href=\"https:\/\/maps.google.com\/maps\/contrib\/100338243655446815049\/photos\">Chase Bank<\/a>",
+    "category_icon": "https:\/\/maps.gstatic.com\/mapfiles\/place_api\/icons\/bank_dollar-71.png",
     "place_lat": 40.7501328,
     "place_long": -73.976499,
-    "category_icon": "https:\/\/maps.gstatic.com\/mapfiles\/place_api\/icons\/bank_dollar-71.png",
-    "google_id": "ChIJY9UK5gNZwokR60pPEpS1WKE",
-    "place_name": "Chase Bank",
+    "radius": null,
+    "travel_dist": null
+  },
+  {
+    "type": "tank",
+    "google_id": "HELLOChhhIJY9UK5gNZwokR60pPEpS1WKE",
+    "place_name": "CHAISE! tank",
+    "place_address": "359 Lexington Ave, New York",
     "rating": 3,
-    "place_address": "355 Lexington Ave, New York",
+    "price_level": '',
     "thumbnail": "<a href=\"https:\/\/maps.google.com\/maps\/contrib\/100338243655446815049\/photos\">Chase Bank<\/a>",
-    "price_level": ""
+    "category_icon": "https:\/\/maps.gstatic.com\/mapfiles\/place_api\/icons\/bank_dollar-71.png",
+    "place_lat": 40.7501328,
+    "place_long": -73.976499,
+    "radius": null,
+    "travel_dist": null,
+  }
+];
+
+  const testDestination = {
+    "username": "brian",
+    "address": "369 Lexington Avenue",
+    "create_time": new Date()
   };
 
-  savePlace(testPlace, (err, results) => {
+  saveDestination(testDestination, testPlaces, (err, results) => {
+    console.log('in the saveDestination callback');
     if (err) {
       console.log('err is', err);
       res.end('boo');
-    } else {
+    } 
       console.log('results are', results);
-      res.end('results!');
-    }
-  })
+      res.end('ROMA FUCKING VICTA!');
+  });
 })
 
 //testing routes
