@@ -96,8 +96,8 @@ app.get(`/testdb`, (req, res) => {
     "category_icon": "https:\/\/maps.gstatic.com\/mapfiles\/place_api\/icons\/bank_dollar-71.png",
     "place_lat": 40.7501328,
     "place_long": -73.976499,
-    "radius": null,
-    "travel_dist": null
+    "distance": "0.7mi",
+    "travel_time": "4 mins"
   },
   {
     "type": "tank",
@@ -110,8 +110,8 @@ app.get(`/testdb`, (req, res) => {
     "category_icon": "https:\/\/maps.gstatic.com\/mapfiles\/place_api\/icons\/bank_dollar-71.png",
     "place_lat": 40.7501328,
     "place_long": -73.976499,
-    "radius": null,
-    "travel_dist": null,
+    "distance": "0.7mi",
+    "travel_time": "4 mins",
   }
 ];
 
