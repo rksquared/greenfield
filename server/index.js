@@ -11,26 +11,6 @@ app.use(bodyParser.json());
 app.use(express.static(__dirname + '/../react-client/dist'));
 
 app.post('/places', (req, res) => {
-  //below is just test data but this should ultimately come from user data/front-end
-  // const testAddress = '369 Lexington Ave, New York NY';
-  // // const badAddress = '5';
-  // // const simpleQuery = [{type: 'bank', query: 'chase'}]; //query should be in an array
-
-  // // const complicatedQuery = [
-  // //   {type: 'bank', query: 'chase', radius: '50'},
-  // //   {type: 'supermarket', radius: '500'},
-  // //   {type: 'restaurant', radius: '500'},
-  // //   {type: 'gym', query: 'equinox', radius: '500'}
-  // // ];
-
-  // const complicatedQueryNoRadius = [
-  //   {type: 'bank', query: 'chase'},
-  //   {type: 'supermarket'},
-  //   {type: 'restaurant', query:'coffee'},
-  //   {type: 'gym', query: 'equinox'}
-  // ];
-  //end of test data
-
   const userQuery = req.body.params;
   // console.log('userquery is', userQuery);
   let formattedQuery;
@@ -46,6 +26,7 @@ app.post('/places', (req, res) => {
       return google.getPlaces(coords, formattedQuery); //have to map object into array
     }) 
     .then((places) => {
+      console.log('places inside index.js is', places)
       if (places.length) res.send(places);
       else res.send('No results, please try again'); //no results so need to try again
     })
@@ -204,7 +185,7 @@ app.post('/login', (req, res) => {
     {type: 'gym', query: 'equinox'}
   ];
   const blank = [];
-  res.send(prefs);
+  res.send(blank);
   // res.status(400).send({
   //   message: 'error!'
   // });

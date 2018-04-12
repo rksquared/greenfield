@@ -9,15 +9,14 @@ class Preferences extends React.Component{
 		this.state = {
         bank: '',
         supermarket: '',
-        eatery: '',
-        coffeeshop: '',
+        meal_takeaway: '',
+        cafe: '',
         gym: '',
-        liquor: false,
-        drycleaner: false,
-        conven_store: false,
-        laund: false,
-        haircare: false,
-        transit: false   
+        liquor_store: false,
+        convenience_store: false,
+        laundry: false,
+        hair_care: false,
+        transit_station: false   
 		}
     this.handlePreferenceState = this.handlePreferenceState.bind(this)
     this.sendPreferencesToServer = this.sendPreferencesToServer.bind(this)
@@ -50,8 +49,8 @@ class Preferences extends React.Component{
 	}
 
 	render() {
-		let {bank, supermarket, eatery, coffeeshop, gym, 
-			   liquor, drycleaner, conven_store, laund, haircare, transit} = this.state;
+		let {bank, supermarket, meal_takeaway, cafe, gym, 
+			   liquor_store, convenience_store, laundry, hair_care, transit_station} = this.state;
 		return (
 			<div> 
 			<h4>Preferences Component</h4>
@@ -67,15 +66,15 @@ class Preferences extends React.Component{
 			         name="supermarket" 
 			         value={supermarket}
 			         onChange={this.handlePreferenceState}/>
-				<div>Favorite Eateries</div>
-		    <input name="eatery" 
+				<div>Favorite Takeout</div>
+		    <input name="meal_takeaway" 
 		    			 type="text" 
-		    			 value={eatery}
+		    			 value={meal_takeaway}
 		    			 onChange={this.handlePreferenceState}/>
-				<div>Favorite Coffee Shop</div>
-				<input name="coffeeshop"
+				<div>Favorite Coffeeshop</div>
+				<input name="cafe"
 							 type="text"  
-				       value={coffeeshop}
+				       value={cafe}
 				       onChange={this.handlePreferenceState}/>
 			  <div>Gym Membership</div>
 				<input type="text" 
@@ -84,33 +83,28 @@ class Preferences extends React.Component{
 				       onChange={this.handlePreferenceState}/>
 			  <div>Liquor Store</div>
 				<input type="checkbox" 
-				       name="liquor" 
-				       value={liquor}
+				       name="liquor_store" 
+				       value={liquor_store}
 				       onChange={this.handlePreferenceState}/>
-			  <div>Dry Cleaner</div>
+			  <div>Convenience Store or Pharmacy</div>
 				<input type="checkbox" 
-				       name="drycleaner" 
-				       value={drycleaner}
-				       onChange={this.handlePreferenceState}/>
-			  <div>Convenience Store</div>
-				<input type="checkbox" 
-				       name="conven_store" 
-				       value={conven_store}
+				       name="convenience_store" 
+				       value={convenience_store}
 				       onChange={this.handlePreferenceState}/>
 				<div>Laundromat</div>
 				<input type="checkbox" 
-				       name="laund" 
-				       value={laund}
+				       name="laundry" 
+				       value={laundry}
 				       onChange={this.handlePreferenceState}/>
 				<div>Haircare</div>
 				<input type="checkbox" 
-				       name="haircare" 
-				       value={haircare}
+				       name="hair_care" 
+				       value={hair_care}
 				       onChange={this.handlePreferenceState}/>
 				<div>Transit Options</div>
 				<input type="checkbox" 
-				       name="transit" 
-				       value={transit}
+				       name="transit_station" 
+				       value={transit_station}
 				       onChange={this.handlePreferenceState}/>
 
 			<button onClick={() => {this.sendPreferencesToServer()}}>Submit</button>
