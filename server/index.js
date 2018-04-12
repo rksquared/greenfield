@@ -89,7 +89,7 @@ app.post('/places', (req, res) => {
             res.send('boo');
           } 
             console.log('results are', results);
-            res.send(JSON.stringify(results));
+            res.send(results);
         });
 
         // res.send(formattedPlaces);
