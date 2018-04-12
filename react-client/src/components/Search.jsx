@@ -42,8 +42,11 @@ class Search extends React.Component {
 	}
 
 	saveFavorite(place) {
-		console.log(`${JSON.stringify(place)} was clicked!`)
-		const params = {place: place};
+		const params = {
+			place: place,
+			address: this.state.address,
+			username: this.props.location.username
+		};
 		axios.post('/save', {params: params})
 			.then((resp) => console.log('resp after saving is', resp))
 			.catch((err) => console.log('err trying to save fave is', err))

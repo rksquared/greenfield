@@ -12,6 +12,8 @@ app.use(express.static(__dirname + '/../react-client/dist'));
 
 app.post('/save', (req, res) => {
   console.log('trying to save', req.body.params.place);
+  console.log('user is', req.body.params.username);
+  console.log('dest is', req.body.params.address)
   //SAVE PLACE INTO DB
   res.send('server is trying to save');
 })
