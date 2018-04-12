@@ -19,16 +19,87 @@ app.post('/places', (req, res) => {
   google.convertAddressToLatLon(userQuery.address)
     .then((coords) => { // use lat/lng to chain the next API call
       return google.getPlaces(coords, formattedQuery); //have to map object into array
-    }) 
+    })
     .then((places) => {
       console.log('places inside index.js is', places)
-      if (places.length) res.send(places);
+
+      if (places.length) {
+
+        // let formattedPlaces = places.map((placeCat) => {
+        //   return placeCat !== undefined ? placeCat.map((place) => {
+        //     let formattedPlace = {
+        //       "type": place.type,
+        //       "google_id": place.google_id,
+        //       "place_name": place.place_name,
+        //       "place_address": place.place_address,
+        //       "rating": place.rating,
+        //       "price_level": place.price_level,
+        //       "thumbnail": place.thumbnail,
+        //       "category_icon": place.category_icon,
+        //       "place_lat": place.place_lat,
+        //       "place_long": place.place_long,
+        //       "distance": place.distance,
+        //       "travel_time": place.travel_time
+        //     };
+
+        //     return formattedPlace;
+        //   }) : placeCat;
+        // });
+
+        let flattened = [];
+        let formattedPlaces = places.map((placeCat) => {
+
+          if (placeCat !== undefined) {
+            return placeCat.map((place) => {
+              let formattedPlace = {
+                "type": place.type,
+                "google_id": place.google_id,
+                "place_name": place.place_name,
+                "place_address": place.place_address,
+                "rating": place.rating,
+                "price_level": place.price_level,
+                "thumbnail": place.thumbnail,
+                "category_icon": place.category_icon,
+                "place_lat": place.place_lat,
+                "place_long": place.place_long,
+                "distance": place.distance,
+                "travel_time": place.travel_time
+              };
+
+              flattened.push(formattedPlace);
+
+            });
+          }
+          console.log('flattened?', flattened[0]);
+          return;
+        });
+
+        const testDestination = {
+          "username": "brian",
+          "address": "369 Lexington Avenue",
+          "create_time": new Date()
+        };
+
+        console.log('correctly flattening api results?', JSON.stringify(flattened[0]));
+
+        saveDestination(testDestination, flattened, (err, results) => {
+          console.log('in the saveDestination callback');
+          if (err) {
+            console.log('err is', err);
+            res.send('boo');
+          } 
+            console.log('results are', results);
+            res.send(JSON.stringify(results));
+        });
+
+        // res.send(formattedPlaces);
+      }
       else res.send('No results, please try again'); //no results so need to try again
     })
     .catch((err) => { //send error code and message asking user to try again
       console.log('err searching:', err);
       res.status(500).send(err);
-    }) 
+    })
 });
 
 //TO FILL IN
@@ -117,7 +188,7 @@ app.get(`/testdb`, (req, res) => {
 
   const testDestination = {
     "username": "brian",
-    "address": "369 Lexington Avenue",
+    "address": "369 Lexington Ave",
     "create_time": new Date()
   };
 
