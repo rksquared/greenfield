@@ -1,5 +1,11 @@
 import React from 'react';
 import axios from 'axios';
+import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
+import FlatButton from 'material-ui/FlatButton';
+import AppBar from 'material-ui/AppBar';
+import RaisedButton from 'material-ui/RaisedButton';
+import TextField from 'material-ui/TextField';
+// import MaterialButton from './MaterialButton';
 
 class Search extends React.Component {
 
@@ -12,6 +18,7 @@ class Search extends React.Component {
 		//this.props.location.prefs is the prefs object
 		this.fetchClosestPlaces = this.fetchClosestPlaces.bind(this)
 		this.handleAddressState = this.handleAddressState.bind(this)
+		this.saveFavorite = this.saveFavorite.bind(this)
 	}
 
 	fetchClosestPlaces(){
@@ -28,7 +35,7 @@ class Search extends React.Component {
 			console.log('places fetched')
 			console.log(response.data)
 			// will need to update result state with data
-			this.setState({results: response})
+			this.setState({results: response.data})
 			
 		})
 		.catch((err) => console.log('error in fetching places'))
@@ -40,22 +47,50 @@ class Search extends React.Component {
 		}, console.log(this.state.address))
 	}
 
+	saveFavorite(place) {
+		const params = {
+			place: place,
+			address: this.state.address,
+			username: this.props.location.username
+		};
+		axios.post('/save', {params: params})
+			.then((resp) => console.log('resp after saving is', resp))
+			.catch((err) => console.log('err trying to save fave is', err))
+	}
+
 	render(){
 		return (
 			<div>
-				<h4>Search Component</h4>
-				<pre>{JSON.stringify(this.props.location.prefs)}</pre>
-				<input type="text"
+				<AppBar title="TravelHero"/>
+				{this.state.results.map(result => {
+					return (
+						result.map(place => {
+							return <Card>
+								<CardHeader
+									title={place.place_name}
+									avatar={place.category_icon}
+									subtitle={place.type}
+									actAsExpander={true}
+									showExpandableButton={true}
+								/>
+								<CardText expandable={true}>
+								{place.place_address}<br></br>
+								{place.distance}<br></br>
+								{place.travel_time} <br></br>
+								</CardText>
+							<CardActions>
+								<FlatButton onClick={() => {this.saveFavorite(place)}}>Save</FlatButton>
+							</CardActions>
+							</Card>
+					})
+				)
+				})}
+				<TextField 
+							 hintText="Enter your destination"
+							 type="text"
 							 value={this.state.address}
 							 onChange={this.handleAddressState}/>
-				<button onClick={() => {this.fetchClosestPlaces()}}>Search</button>	 
-				
-				<div>
-				</div>
-				<li>
-
-				</li>
-					}
+				<RaisedButton onClick={() => {this.fetchClosestPlaces()}}>Search</RaisedButton>	 
 			</div>
 		)
 	}
