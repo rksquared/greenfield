@@ -2,6 +2,10 @@ import React from 'react';
 import axios from 'axios';
 import {withRouter} from 'react-router-dom';
 import MaterialButton from './MaterialButton.jsx';
+import FlatButton from 'material-ui/FlatButton';
+import RaisedButton from 'material-ui/RaisedButton';
+import Paper from 'material-ui/Paper';
+import TextField from 'material-ui/TextField';
 
 class Login extends React.Component{
 
@@ -52,18 +56,31 @@ class Login extends React.Component{
     console.log(this.props.history)
   	return (
 	<div>
-	    <h4>Login Component</h4>
-		Username
-			<input 	
-          type="text"
-					value={this.state.username} 
-					onChange={this.handleUsernameState}/>
-		Password
-			<input 	type="text"/>
-			<MaterialButton/>
-			<button onClick={()=> {this.sendUsernameToServer()}}>LOGIN</button>
-			<button>SIGNUP</button>
-      <button onClick={() => {this.props.history.push('/preferences')}}>Change Router</button>
+		<Paper style={{
+			height: 120,
+			width: 1000,
+			margin: 20,
+			textAlign: 'center',
+			display: 'block'
+		}} zDepth={2}>
+		<div>
+	    <h4>Please login to Travelhero</h4>
+		{'Username:    '}  
+			<TextField
+				type="text"
+				name="username"
+				value={this.state.username} 
+				onChange={this.handleUsernameState}
+			/>
+		{'Password:    '}
+			<TextField
+				type="text"
+				name="password"
+			/>
+			<RaisedButton onClick={()=> {this.sendUsernameToServer()}}>LOGIN</RaisedButton>
+			<RaisedButton>SIGNUP</RaisedButton>
+	</div>
+	</Paper>
 	</div>
   		)
   	}

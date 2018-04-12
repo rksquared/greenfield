@@ -12,7 +12,6 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import { getMuiTheme, lightBaseTheme, darkBaseTheme } from 'material-ui/styles';
 import {cyan500, grey300} from 'material-ui/styles/colors';
 import AppBar from 'material-ui/AppBar';
-import Paper from 'material-ui/Paper';
 
 class App extends React.Component {
 
@@ -38,7 +37,6 @@ class App extends React.Component {
     return (
 
       <div>
-        <h4>App Component</h4>
         <MuiThemeProvider muiTheme={this.makeMuiTheme()}>
           <Router>
           <Switch>

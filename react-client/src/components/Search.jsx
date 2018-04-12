@@ -2,6 +2,8 @@ import React from 'react';
 import axios from 'axios';
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 import FlatButton from 'material-ui/FlatButton';
+import AppBar from 'material-ui/AppBar';
+import TextField from 'material-ui/TextField';
 // import MaterialButton from './MaterialButton';
 
 class Search extends React.Component {
@@ -58,7 +60,7 @@ class Search extends React.Component {
 	render(){
 		return (
 			<div>
-				<h4>Search Component</h4>
+				<AppBar title="TravelHero"/>
 				{this.state.results.map(result => {
 					return (
 						result.map(place => {
@@ -82,17 +84,12 @@ class Search extends React.Component {
 					})
 				)
 				})}
-				<input type="text"
+				<TextField 
+							 hintText="Enter your destination"
+							 type="text"
 							 value={this.state.address}
 							 onChange={this.handleAddressState}/>
 				<button onClick={() => {this.fetchClosestPlaces()}}>Search</button>	 
-				
-				<div>
-				</div>
-				<li>
-
-				</li>
-					}
 			</div>
 		)
 	}
