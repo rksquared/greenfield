@@ -30,7 +30,17 @@ class App extends React.Component {
         borderColor: cyan500
       },
       appBar: {
-        height: 80
+        height: 80,
+        display:"flex", 
+        flex: 1, 
+        justifyContent: "center", 
+        alignItems: "center",
+        titleStyle: {
+          display:"flex", 
+          flex: 1, 
+          justifyContent: "center", 
+          alignItems: "center",
+        }
       }
     })
   }
