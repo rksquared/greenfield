@@ -14,7 +14,7 @@ class Preferences extends React.Component{
         bank: '',
         supermarket: '',
         meal_takeaway: '',
-        cafe: '',
+        cafe: 'Starbucks',
         gym: '',
         liquor_store: false,
         convenience_store: false,

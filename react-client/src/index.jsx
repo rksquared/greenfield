@@ -7,6 +7,7 @@ import Login from './components/Login.jsx';
 import Search from './components/Search.jsx';
 import Preferences from './components/Preferences.jsx';
 import Favorites from './components/Favorites.jsx';
+import Signup from './components/Signup.jsx';
 
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import { getMuiTheme, lightBaseTheme, darkBaseTheme } from 'material-ui/styles';
@@ -43,6 +44,7 @@ class App extends React.Component {
               <Login exact path="/" component={Login}/>
               <Preferences  path="/preferences" component={Preferences}/>
               <Search path="/search" component={Search}/>
+              <Signup path="/signup" component={Signup}/>
           </Switch>
           </Router> 
           </MuiThemeProvider>

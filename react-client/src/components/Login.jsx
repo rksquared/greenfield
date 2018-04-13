@@ -13,7 +13,8 @@ class Login extends React.Component{
   	super(props)
   	this.state = { username: '' } //move preferences to this statue
   	this.sendUsernameToServer = this.sendUsernameToServer.bind(this)
-  	this.handleUsernameState = this.handleUsernameState.bind(this)
+		this.handleUsernameState = this.handleUsernameState.bind(this)
+		this.goToSignup = this.goToSignup.bind(this)
   }
 
   // sending name to database
@@ -50,7 +51,12 @@ class Login extends React.Component{
   	this.setState({
   		username: event.target.value
   	}, () => console.log(this.state.username))
-  }
+	}
+	
+	goToSignup() {
+		console.log('trying to go to signup')
+		this.props.history.push({pathname: '/signup'})
+	}
 
   render() { 
     console.log(this.props.history)
@@ -64,7 +70,7 @@ class Login extends React.Component{
 			display: 'block'
 		}} zDepth={2}>
 		<div>
-	    <h4>Please login to Travelhero</h4>
+	    <h4>Please login to TravelHero</h4>
 		{'Username:    '}  
 			<TextField
 				type="text"
@@ -78,7 +84,7 @@ class Login extends React.Component{
 				name="password"
 			/>
 			<RaisedButton onClick={()=> {this.sendUsernameToServer()}}>LOGIN</RaisedButton>
-			<RaisedButton>SIGNUP</RaisedButton>
+			<RaisedButton onClick={this.goToSignup}>SIGNUP</RaisedButton>
 	</div>
 	</Paper>
 	</div>
