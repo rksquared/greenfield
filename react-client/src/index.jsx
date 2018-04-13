@@ -11,7 +11,7 @@ import Signup from './components/Signup.jsx';
 
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import { getMuiTheme, lightBaseTheme, darkBaseTheme } from 'material-ui/styles';
-import {cyan500, grey300} from 'material-ui/styles/colors';
+import {cyan500, grey300, teal500, teal900} from 'material-ui/styles/colors';
 import AppBar from 'material-ui/AppBar';
 
 class App extends React.Component {
@@ -24,7 +24,9 @@ class App extends React.Component {
   makeMuiTheme() {
     return getMuiTheme({
       palette: {
-        textColor: cyan500,
+        primary1Color: teal500,
+        primary2Color: teal500,
+        textColor: `#757575`,
         borderColor: cyan500
       },
       appBar: {

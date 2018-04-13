@@ -97,7 +97,7 @@ app.get('/', function (req, res) {
 });
 
 app.post('/login', (req, res) => {
-  console.log('user trying to login is', req.body.user);
+  console.log('user trying to login is', req.body.userObj.username);
   //req.body.user is the username
   //check DB for user
     //if user not found, send to signup page?
@@ -110,8 +110,16 @@ app.post('/login', (req, res) => {
     {type: 'gym', query: 'equinox'}
   ];
 
-  const blank = [];
-  res.send(blank);
+  checkUser(req.body.userObj, (err, results) => {
+    if (results && results.userData) {
+      res.send(JSON.stringify(results));
+      return; 
+    }
+    const blank = [];
+    res.send(blank);
+
+  });  
+
 })
 
 app.post('/preferences', function (req, res) {
