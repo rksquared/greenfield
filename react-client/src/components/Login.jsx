@@ -7,6 +7,17 @@ import RaisedButton from 'material-ui/RaisedButton';
 import Paper from 'material-ui/Paper';
 import TextField from 'material-ui/TextField';
 
+
+
+import {cyan500, grey300, teal500, teal900, grey700} from 'material-ui/styles/colors';
+
+
+const styles = {
+	hintStyle: {color: grey700},
+	underlineStyle: {borderColor: grey300}
+};
+
+
 class Login extends React.Component{
 
   constructor(props) {
@@ -20,8 +31,8 @@ class Login extends React.Component{
   // sending name to database
   sendUsernameToServer(){
     console.log('function reached')
-  	let userObj = {user: this.state.username}
-		axios.post('/login', userObj)
+  	let userObj = {"username": this.state.username, "password": "pwd"}
+		axios.post('/login', {"userObj": userObj})
   	.then((response) => {
 			console.log('username sent!')
 			console.log('test prefs are', response.data);
@@ -61,32 +72,43 @@ class Login extends React.Component{
   render() { 
     console.log(this.props.history)
   	return (
-	<div>
+	<div style={{backgroundColor: teal500, minHeight: `100vh`, display:"flex", flex: 1, justifyContent: "center", alignItems: "center"}}>
+
 		<Paper style={{
-			height: 120,
-			width: 1000,
+			height: `45rem`,
+			width: `22rem`,
 			margin: 20,
+			paddingTop: `5rem`,
 			textAlign: 'center',
-			display: 'block'
+			justifyContent: "center", 
+			alignItems: "center"
 		}} zDepth={2}>
-		<div>
-	    <h4>Please login to TravelHero</h4>
-		{'Username:    '}  
+			<img src={require('../assets/logo.svg')} alt="My logo" />
+			<h5 >At Home, Anywhere.</h5>
+			<br/>
+	    <h4>Please login to TravelHero.</h4>
 			<TextField
 				type="text"
 				name="username"
 				value={this.state.username} 
 				onChange={this.handleUsernameState}
+				hintText="Username"
+				hintStyle={styles.hintStyle}
+				underlineStyle={styles.underlineStyle}
 			/>
-		{'Password:    '}
+			<br />
 			<TextField
 				type="text"
 				name="password"
+				hintText="Password"
+				hintStyle={styles.hintStyle}
+				underlineStyle={styles.underlineStyle}
 			/>
+			<br/>
+			<br/>
 			<RaisedButton onClick={()=> {this.sendUsernameToServer()}}>LOGIN</RaisedButton>
 			<RaisedButton onClick={this.goToSignup}>SIGNUP</RaisedButton>
-	</div>
-	</Paper>
+		</Paper>
 	</div>
   		)
   	}
