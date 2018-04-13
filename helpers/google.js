@@ -70,7 +70,7 @@ const simplifyGoogleResults = (data, type) => {
       category_icon: results.icon,
       google_id: results.place_id,
       place_name: results.name,
-      rating: results.rating,
+      rating: results.rating || 0,
       place_address: results.vicinity,
       thumbnail: results.photos ? results.photos[0].html_attributions[0] : '',
       price_level: results.price_level ? results.price_level : ''
