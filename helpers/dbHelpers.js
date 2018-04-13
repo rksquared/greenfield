@@ -152,6 +152,9 @@ const savePrefs = (prefs, cb) => {
   connection.query(prefQuery2,
     (err, savedPrefs) => {
       if (err) {return console.error(`err saving new preferences: ${err}`);}
+
+      console.log('DEBUGGING savedPrefs in db helper:', savedPrefs)
+
       cb(err, savedPrefs);
     });
 }

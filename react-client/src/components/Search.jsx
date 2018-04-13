@@ -28,7 +28,7 @@ class Search extends React.Component {
 		let params = {
 			address: this.state.address,
 			newPrefs: this.props.location.prefs,
-			savedPrefs: this.props.location.savedPrefs
+			savedPrefs: this.props.location.savedPrefs ? this.props.location.savedPrefs.userData : undefined
 		}
 		console.log('new prefs are', params.newPrefs)
 		console.log('savedprefs are', params.savedPrefs)

@@ -40,7 +40,7 @@ app.post('/places', (req, res) => {
   const userQuery = req.body.params;
 
   //format query differently based on whether it came from user or from DB
-  const formattedQuery = userQuery.newPrefs ? utils.mapReactObj(userQuery.newPrefs) : userQuery.savedPrefs.userData;
+  const formattedQuery = userQuery.newPrefs ? utils.mapReactObj(userQuery.newPrefs) : utils.mapReactObj(userQuery.savedPrefs);
 
   // console.log('get userQuery from front', userQuery);
   // console.log('DEBUGGING FORMAT OF PREFS', formattedQuery);
@@ -112,6 +112,25 @@ app.post('/login', (req, res) => {
 
   checkUser(req.body.userObj, (err, results) => {
     if (results && results.userData) {
+      let {bank, grocery_store, coffee_shop, gym_membership, laundromat, liquor_store, hair_care, restaurant, convenience_store, public_transit} = results.userData[0];
+
+      let formattedPrefs = {
+        "bank": bank,
+        "supermarket": grocery_store,
+        "meal_takeaway": restaurant,
+        "cafe": coffee_shop,
+        "gym": gym_membership,
+        "liquor_store": liquor_store,
+        "convenience_store": convenience_store,
+        "laundry": laundromat,
+        "hair_care": hair_care,
+        "transit_station": public_transit
+      };
+
+      results.userData = formattedPrefs;
+
+      console.log('results userdata in checkuser /login route:', JSON.stringify(results.userData));
+
       res.send(JSON.stringify(results));
       return; 
     }
