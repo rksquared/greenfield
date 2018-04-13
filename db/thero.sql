@@ -12,8 +12,9 @@ CREATE TABLE users (
   coffee_shop VARCHAR(60),
   gym_membership VARCHAR(60),
   laundromat VARCHAR(60),
-  dry_cleaner VARCHAR(60),
+  liquor_store VARCHAR(60),
   hair_care VARCHAR(60),
+  restaurant VARCHAR(80),
   convenience_store VARCHAR(60),
   public_transit VARCHAR(60)
 );

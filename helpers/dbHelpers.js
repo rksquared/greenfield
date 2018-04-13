@@ -92,7 +92,6 @@ const checkUser = (user, cb) => {
                     };
                     // console.log('what are pushing to fave', fave)
 
-                    // faves.push(fave);
                     resolve(fave);
 
                     // console.log('faves on each map iteration', faves
@@ -113,21 +112,20 @@ const checkUser = (user, cb) => {
           
         }
 
-        getAllFavorites(destinationIDs, (results) => {
+        getAllFavorites(destinationIDs, (savedLocations) => {
+
+          let userData = {
+            userData: results,
+            savedLocations: savedLocations
+          };
 
           // console.log('results correctly composed FINALLY', results);
-          cb(err, results);
-            // .then((res) => {
-            //   cb(err, res);
-            // })
-            // .catch((err) => {
-            //   cb(err);
-            // })
+          cb(err, userData);
 
-          // cb(err, results);
         });
 
 
+      //   ---------- old bulk retrieve ------------
       //   let joinQuery = destinationIDs.map((destination) => {
       //     return `SELECT google_id_saved_places, travel_time, distance FROM destination_to_place WHERE id_saved_destination= ${destination}; `;
       //   }).join('');
@@ -208,6 +206,19 @@ const createUser = (user, cb) => {
   });
 }
 
+
+const savePrefs = (prefs, cb) => {
+  console.log(`prefs obj in savePrefs ${JSON.stringify(prefs)}`);
+  let prefQuery = `UPDATE users ?`;
+  let prefQuery2 = `UPDATE users SET bank= "${prefs.bank}", grocery_store= "${prefs.grocery_store}", coffee_shop= "${prefs.coffee_shop}", restaurant= "${prefs.restaurant}", gym_membership= "${prefs.gym_membership}", laundromat= "${prefs.laundromat}", liquor_store= "${prefs.liquor_store}", hair_care= "${prefs.hair_care}", convenience_store= "${prefs.convenience_store}", public_transit= "${prefs.public_transit}" WHERE username= "${prefs.username}" ;`  
+
+
+  connection.query(prefQuery2,
+    (err, savedPrefs) => {
+      if (err) {return console.error(`err saving new preferences: ${err}`);}
+      cb(err, savedPrefs);
+    });
+}
 
 //save new search
 const saveDestination = (destination, places, cb) => {
@@ -294,3 +305,4 @@ const bulkJoinPlaceIds = (places) => {
 module.exports.createUser = createUser;
 module.exports.saveDestination = saveDestination;
 module.exports.checkUser = checkUser;
+module.exports.savePrefs = savePrefs;
