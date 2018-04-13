@@ -159,8 +159,8 @@ const savePrefs = (prefs, cb) => {
 //save new search
 const saveDestination = (destination, places, cb) => {
 
-  console.log('is the username getting passed down?', destination.username);
-
+  // console.log('is the username getting passed down?', destination.username);
+// console.log(`DEBUGGING: places is ${JSON.stringify(places)}`)
 //format date from JS UTC to MYSQL DATETIME
   function twoDigits(d) {
     if(0 <= d && d < 10) return "0" + d.toString();

@@ -40,16 +40,16 @@ app.post('/places', (req, res) => {
   const userQuery = req.body.params;
 
   //format query differently based on whether it came from user or from DB
-  const formattedQuery = userQuery.newPrefs ? utils.mapReactObj(userQuery.newPrefs) : userQuery.savedPrefs;
+  const formattedQuery = userQuery.newPrefs ? utils.mapReactObj(userQuery.newPrefs) : userQuery.savedPrefs.userData;
 
-  console.log('get userQuery from front', userQuery);
-
+  // console.log('get userQuery from front', userQuery);
+  // console.log('DEBUGGING FORMAT OF PREFS', formattedQuery);
   google.convertAddressToLatLon(userQuery.address)
     .then((coords) => { // use lat/lng to chain the next API call
       return google.getPlaces(coords, formattedQuery); //have to map object into array
     })
     .then((places) => {
-      console.log('places inside index.js is', places)
+      console.log('DEBUGGING: places inside index.js is', JSON.stringify(places));
       if (places.length) {
         let flattened = [];
         let formattedPlaces = places.map((placeCat) => {

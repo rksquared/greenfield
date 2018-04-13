@@ -30,7 +30,7 @@ class Login extends React.Component{
 
   // sending name to database
   sendUsernameToServer(){
-    console.log('function reached')
+    // console.log('function reached')
   	let userObj = {"username": this.state.username, "password": "pwd"}
 		axios.post('/login', {"userObj": userObj})
   	.then((response) => {
@@ -42,6 +42,7 @@ class Login extends React.Component{
 					username: this.state.username
 				});
 			} else {
+				// console.log('DEBUGGING: savedPrefs are', response.data);
 				this.props.history.push({
 					pathname: '/search',
 					savedPrefs: response.data,
