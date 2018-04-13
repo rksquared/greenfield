@@ -13,12 +13,15 @@ class Search extends React.Component {
 		super(props)
 		this.state = {
 			address: '',
-			results: []
+			results: [],
+			favorites: [],
+			swapFaves: false
 		}
 		//this.props.location.prefs is the prefs object
 		this.fetchClosestPlaces = this.fetchClosestPlaces.bind(this)
 		this.handleAddressState = this.handleAddressState.bind(this)
 		this.saveFavorite = this.saveFavorite.bind(this)
+		this.swapSeachtoFavorites = this.swapSeachtoFavorites.bind(this)
 	}
 
 	fetchClosestPlaces(){
@@ -61,13 +64,20 @@ class Search extends React.Component {
 			.catch((err) => console.log('err trying to save fave is', err))
 	}
 
+	swapSeachtoFavorites(){
+		this.setState({
+			swapFaves: !this.state.swapFaves
+		})
+	}
+
 	render(){
 		return (
 			<div>
 				<AppBar title="TravelHero"/>
-				{this.state.results.map(result => {
+				{
+					this.state.swapFaves ? this.state.favorites.map((result) => {
 					return (
-						result.map(place => {
+						result.map((place) => {
 							return <Card>
 								<CardHeader
 									title={place.place_name}
@@ -87,13 +97,39 @@ class Search extends React.Component {
 							</Card>
 					})
 				)
-				})}
+				}) : 
+				
+				this.state.results.map((result) => {
+					return (
+						result.map((place) => {
+							return <Card>
+								<CardHeader
+									title={place.place_name}
+									avatar={place.category_icon}
+									subtitle={place.type}
+									actAsExpander={true}
+									showExpandableButton={true}
+								/>
+								<CardText expandable={true}>
+								{place.place_address}<br></br>
+								{place.distance}<br></br>
+								{place.travel_time} <br></br>
+								</CardText>
+							<CardActions>
+								<FlatButton onClick={() => {this.saveFavorite(place)}}>Save</FlatButton>
+							</CardActions>
+							</Card>
+					})
+				)
+				})
+			}
 				<TextField 
 							 hintText="Enter your destination"
 							 type="text"
 							 value={this.state.address}
 							 onChange={this.handleAddressState}/>
 				<RaisedButton onClick={() => {this.fetchClosestPlaces()}}>Search</RaisedButton>	 
+				<RaisedButton onClick={() => {this.swapSeachtoFavorites()}}>{this.state.swapFaves ? "Searches" : "Save"}</RaisedButton>
 			</div>
 		)
 	}
