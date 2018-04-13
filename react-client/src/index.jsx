@@ -30,7 +30,7 @@ class App extends React.Component {
         borderColor: cyan500
       },
       appBar: {
-        height: 50
+        height: 80
       }
     })
   }

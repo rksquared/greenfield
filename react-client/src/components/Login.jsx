@@ -83,7 +83,7 @@ class Login extends React.Component{
 			textAlign: 'center',
 			justifyContent: "center", 
 			alignItems: "center"
-		}} zDepth={2}>
+		}} zDepth={4}>
 			<img src={require('../assets/logo.svg')} alt="My logo" />
 			<h5 >At Home, Anywhere.</h5>
 			<br/>
@@ -95,6 +95,7 @@ class Login extends React.Component{
 				onChange={this.handleUsernameState}
 				hintText="Username"
 				hintStyle={styles.hintStyle}
+				inputStyle={{color: `black`}}
 				underlineStyle={styles.underlineStyle}
 			/>
 			<br />
@@ -103,12 +104,15 @@ class Login extends React.Component{
 				name="password"
 				hintText="Password"
 				hintStyle={styles.hintStyle}
+				inputStyle={{color: `black`}}
 				underlineStyle={styles.underlineStyle}
 			/>
 			<br/>
 			<br/>
-			<RaisedButton onClick={()=> {this.sendUsernameToServer()}}>LOGIN</RaisedButton>
-			<RaisedButton onClick={this.goToSignup}>SIGNUP</RaisedButton>
+			<RaisedButton primary={true} label="LOGIN" onClick={()=> {this.sendUsernameToServer()}}/>
+			<br/>
+			<br/>
+			<FlatButton label="SIGNUP" onClick={this.goToSignup} />
 		</Paper>
 	</div>
   		)

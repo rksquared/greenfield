@@ -73,7 +73,7 @@ class Search extends React.Component {
 	render(){
 		return (
 			<div>
-				<AppBar title="TravelHero"/>
+				<AppBar title="TravelHero"> </AppBar>
 				{
 					this.state.swapFaves ? this.state.favorites.map((result) => {
 					return (
