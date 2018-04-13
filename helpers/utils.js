@@ -1,5 +1,6 @@
 
-const mapReactObj = (reactObj) => {
+const mapReactObj = (reactObj) => { //preferences obj from React
+	// console.log('DEBUGGING: REACT OBJ IS', JSON.stringify(reactObj));
 	let googleArr = [];
 	for (var type in reactObj) {
 		if (reactObj[type] === true || reactObj[type] === 'any') {
