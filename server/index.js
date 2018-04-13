@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const axios = require('axios');
 const google = require('../helpers/google.js');
-const {createUser, saveDestination, checkUser} = require(`../helpers/dbHelpers.js`);
+const {createUser, saveDestination, checkUser, savePrefs} = require(`../helpers/dbHelpers.js`);
 const port = 3000;
 const utils = require('../helpers/utils.js');
 let app = express();
@@ -119,11 +119,55 @@ app.post('/preferences', function (req, res) {
   // include controller for database query 
   // res.send('recieved preferences')
   console.log(req.body);
-  let userPrefs = req.body.params.preferences;
+  let {
+    bank, 
+    supermarket,
+    meal_takeaway,
+    cafe,
+    gym,
+    liquor_store,
+    convenience_store,
+    laundry,
+    hair_care,
+    transit_station
+    } = req.body.params.preferences;
+
   let username = req.body.params.username;
+
+
+  let userPrefs = {
+    username: username,
+    password: 'pwd',
+    bank: bank,
+    grocery_store: supermarket,
+    coffee_shop: cafe,
+    restaurant: meal_takeaway,
+    gym_membership: gym,
+    laundromat: laundry,
+    liquor_store: liquor_store,
+    hair_care: hair_care,
+    convenience_store: convenience_store,
+    public_transit: transit_station
+  } 
+  
+  // req.body.params.preferences 
+  //     { bank: 'Chase',
+  //       supermarket: 'any',
+  //       meal_takeaway: '',
+  //       cafe: '',
+  //       gym: '',
+  //       liquor_store: true,
+  //       convenience_store: false,
+  //       laundry: false,
+  //       hair_care: false,
+  //       transit_station: false },
+  //    username: 'br' } }
   //save to database
   console.log(`username is ${username} and prefs are ${userPrefs}`)
-  res.send();
+
+  savePrefs(userPrefs, (err, prefs) => {
+    res.send(prefs);
+  })
 });
 
 //create test users
