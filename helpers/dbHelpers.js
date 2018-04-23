@@ -46,19 +46,19 @@ const checkUser = (user, cb) => {
               connection.query(`SELECT google_id_saved_places, travel_time, distance FROM destination_to_place WHERE id_saved_destination= ${eachDest}; `, (err, matches) => {
                 if (err) { return console.error(`Error selecting placeIds with the from join table: ${err}`); }
 
-                // console.log(`Results from retrieving matching placeIds from join table: ${JSON.stringify(matches)}`);
+                console.log(`Results from retrieving matching placeIds from join table: ${JSON.stringify(matches)}`);
 
                 let googlePlaceIDs = matches.map((match) => {
                   return match.google_id_saved_places;
                 });
 
-                // console.log(`mapped google place ids: ${googlePlaceIDs}, typeof: ${Array.isArray(googlePlaceIDs)}`);
+                console.log(`mapped google place ids: ${googlePlaceIDs}, typeof: ${Array.isArray(googlePlaceIDs)}`);
 
                 let bulkPlaceQuery = googlePlaceIDs.map((google_id) => {
                   return `SELECT * FROM saved_places WHERE google_id= '${google_id}'; `;
                 }).join('');
 
-                // console.log(`BULK QUERY from mapped google_ids: ${bulkPlaceQuery}`);
+                console.log(`BULK QUERY from mapped google_ids: ${bulkPlaceQuery}`);
 
                 let travelTimeInfo = matches.map((match) => {
                   return [match.destination, match.travel_time];
@@ -91,7 +91,7 @@ const checkUser = (user, cb) => {
                         return place;
                       })
                     };
-                    // console.log('what are pushing to fave', fave)
+                    console.log('what are pushing to fave', fave)
 
                     resolve(fave);
 
@@ -120,7 +120,7 @@ const checkUser = (user, cb) => {
             savedLocations: savedLocations
           };
 
-          // console.log('results correctly composed FINALLY', results);
+          console.log('results correctly composed FINALLY', results);
           cb(err, userData);
 
         });

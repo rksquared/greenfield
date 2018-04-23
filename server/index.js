@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const axios = require('axios');
 const google = require('../helpers/google.js');
 const {createUser, saveDestination, checkUser, savePrefs} = require(`../helpers/dbHelpers.js`);
-const port = 3000;
+const port = 3005;
 const utils = require('../helpers/utils.js');
 let app = express();
 
